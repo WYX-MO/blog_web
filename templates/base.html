@@ -1,0 +1,52 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <!-- <link rel="stylesheet" href="{% static 'css/styles.css' %}"> -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+    {% block head %}{% endblock %}
+</head>
+
+<body class="custom-bg-gradient">
+    <header class="p-3 text-bg-dark border-bottom mb-3">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a href="/blog" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                    <img src="{% static 'image/logo_img.png' %}" alt="Bootstrap" width="55" height="55"
+                        class="d-inline-block align-text-top rounded-5">
+                </a>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                    <li><a href="#" class="nav-link px-2 text-secondary">主页</a></li>
+                    <li><a href="#" class="nav-link px-2 text-white">广场</a></li>
+                    <li><a href="#" class="nav-link px-2 text-white">MAN！</a></li>
+                    <li><a href="#" class="nav-link px-2 text-white">问题</a></li>
+                    <li><a href="#" class="nav-link px-2 text-white">关于</a></li>
+                </ul>
+
+                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+                    <input type="search" class="form-control form-control-dark text-bg-dark text-white"
+                        placeholder="搜索..." aria-label="Search">
+                </form>
+
+                <div class="text-end">
+                    <button type="button" class="btn btn-outline-light me-2">登录</button>
+                    <button type="button" class="btn btn-warning">注册</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mt-5 p-3 bg-dark rounded-5">
+        {% block main %}{% endblock %}
+    </main>
+</body>
+
+</html>

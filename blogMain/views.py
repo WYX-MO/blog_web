@@ -11,3 +11,4 @@ def detail(request, blog_id):
 
 def public(request):
     return render(request, 'public.html')
+

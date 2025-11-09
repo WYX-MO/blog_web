@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+博客发布页
+{% endblock %}
+
+{% block head %}
+<!-- 引入样式 -->
+<link href="https://unpkg.com/@wangeditor/editor@latest/dist/css/style.css" rel="stylesheet" />
+<script src="https://unpkg.com/@wangeditor/editor@latest/dist/index.js"></script>
+<script src="{% static 'js/public_blog.js' %}"></script>
+<style>
+    /* 工具栏背景 */
+    .w-e-toolbar {
+        background-color: #d69f39 !important;
+
+        /* 橙色工具栏 */
+        border: none !important;
+    }
+
+    /* 编辑区域背景 */
+    .w-e-text-container {
+        background-color: #414040 !important;
+        color: #ffffff !important;
+    }
+
+    #editor-container {
+        height: 300px;
+
+    }
+</style>
+
+{% endblock %}
+
+{% block main %}
+<h1 class="text-white">发布新博客</h1>
+<div class="mt-3">
+    <form action="" method="post">
+        <div class="mb-3">
+            <label for="title" class="form-label text-white">标题</label>
+            <input type="text" class="form-control form-control-dark text-bg-dark text-white" id="title" name="title"
+                required>
+        </div>
+        <div class="mb-3">
+            <label for="category" class="form-label text-white">分类</label>
+            <select class="form-select form-select-dark text-bg-dark text-white" id="category" name="category" required>
+                <option value="" selected disabled>请选择分类</option>
+                <option value="1">分类1</option>
+                <option value="2">分类2</option>
+                <option value="3">分类3</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <div id="editor-wrapper">
+                <div id="toolbar-container"><!-- 工具栏 --></div>
+                <div id="editor-container"><!-- 编辑器 --></div>
+            </div>
+            <!-- <label for="content" class="form-label text-white">内容</label>
+                        <textarea class="form-control form-control-dark text-bg-dark text-white" id="content" name="content" rows="5" required></textarea> -->
+        </div>
+        <div class="text-end">
+            <button type="submit" class="btn btn-warning">发布</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
