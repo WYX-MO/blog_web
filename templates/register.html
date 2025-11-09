@@ -3,6 +3,11 @@
 {% block title %}
     注册
 {% endblock %}
+{% load static %}
+{% block head %}
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/register.js' %}"></script>
+{% endblock %}
 
 {% block main %}
 <div style="width: 300px; margin: auto;">
@@ -19,9 +24,9 @@
             <div id="emailHelp" class="form-text text-white">We'll never share your email with anyone else.</div>
         </div>
         <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="请输入验证码" name="verify_code"
+            <input type="text" class="form-control" placeholder="请输入验证码" name="captcha"
                 aria-describedby="button-addon2">
-            <button class="btn btn-outline-secondary" type="button" id="button-addon2">获取验证码</button>
+            <button class="btn btn-outline-secondary" type="button" id="button-get-captcha">获取验证码</button>
         </div>
         <div class="mb-3">
             <label for="exampleInputPassword1" class="form-label">Password</label>
