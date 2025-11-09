@@ -1,0 +1,13 @@
+/* 优化后的青黑渐变（消除断纹，更平滑） */
+.custom-bg-gradient {
+    background: linear-gradient(135deg, #0e121a 0%, #1c2c3d 100%);
+    background-attachment: fixed;
+    /* 固定背景，避免滚动时出现断层 */
+    color: white;
+}
+
+body {
+    
+    background-color: #030303;
+
+}
