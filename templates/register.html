@@ -1,37 +1,58 @@
 {% extends 'base.html' %}
-<!DOCTYPE html>
-{% block title %}
-    注册
-{% endblock %}
+{% block title %}注册{% endblock %}
 {% load static %}
 {% block head %}
-    <script src="{% static 'js/jquery.min.js' %}"></script>
-    <script src="{% static 'js/register.js' %}"></script>
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/register.js' %}"></script>
+<style>
+    .error-msg {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    .is-invalid {
+        border-color: #dc3545 !important;
+    }
+</style>
 {% endblock %}
 
 {% block main %}
 <div style="width: 300px; margin: auto;">
     <h1>注册</h1>
-    <form action="" method="post">
+    <!-- 保留表单原action，添加id用于JS处理 -->
+    <form id="registerForm" action="" method="post">
         {% csrf_token %}
+        <!-- 用户名输入框 + 错误提示 -->
         <div class="mb-3">
             <label for="exampleInputUsername1" class="form-label">Username</label>
             <input type="text" class="form-control" placeholder="请输入用户名" name="username" id="exampleInputUsername1">
+            <div class="error-msg" id="usernameError"></div>
         </div>
+
+        <!-- 邮箱输入框 + 错误提示 -->
         <div class="mb-3">
             <label for="exampleInputEmail1" class="form-label">Email address</label>
             <input type="email" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp">
             <div id="emailHelp" class="form-text text-white">We'll never share your email with anyone else.</div>
+            <div class="error-msg" id="emailError"></div>
         </div>
+
+        <!-- 验证码输入框 + 错误提示 -->
         <div class="input-group mb-3">
             <input type="text" class="form-control" placeholder="请输入验证码" name="captcha"
                 aria-describedby="button-addon2">
             <button class="btn btn-outline-secondary" type="button" id="button-get-captcha">获取验证码</button>
         </div>
+        <div class="error-msg" id="captchaError"></div>
+
+        <!-- 密码输入框 + 错误提示 -->
         <div class="mb-3">
             <label for="exampleInputPassword1" class="form-label">Password</label>
             <input type="password" class="form-control" name="password" id="exampleInputPassword1">
+            <div class="error-msg" id="passwordError"></div>
         </div>
+
         <button type="submit" class="btn btn-warning w-100">Submit</button>
     </form>
 </div>
