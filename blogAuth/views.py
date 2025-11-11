@@ -23,6 +23,10 @@ def register(request):
             username = form.cleaned_data['username']
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
+            if User.objects.filter(username=username).exists():
+                return HttpResponse(json.dumps({'code': 400, 'msg': 'username already exists'}), content_type='application/json')
+            if User.objects.filter(email=email).exists():
+                return HttpResponse(json.dumps({'code': 400, 'msg': 'email already exists'}), content_type='application/json')
             User.objects.create_user(username=username, email=email, password=password)
             return redirect(reverse('blogAuth:blogAuth_login'))
         else:
