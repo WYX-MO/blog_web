@@ -8,10 +8,10 @@
 
 {% block head %}
 <!-- 引入样式 -->
+
 <link href="https://unpkg.com/@wangeditor/editor@latest/dist/css/style.css" rel="stylesheet" />
 <script src="https://unpkg.com/@wangeditor/editor@latest/dist/index.js"></script>
-<script src="{% static 'js/jquery.min.js' %}"></script>
-<script src="{% static 'js/public_blog.js' %}"></script>
+
 <style>
     /* 工具栏背景 */
     .w-e-toolbar {
@@ -32,7 +32,8 @@
 
     }
 </style>
-
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/public_blog.js' %}"></script>
 {% endblock %}
 
 {% block main %}
@@ -64,7 +65,7 @@
                         <textarea class="form-control form-control-dark text-bg-dark text-white" id="content" name="content" rows="5" required></textarea> -->
         </div>
         <div class="text-end">
-            <button type="button" class="btn btn-warning" id="submit-btn">发布</button>
+            <button type="button" class="btn btn-warning" id="submit-btn" name="submit-btn">发布</button>
         </div>
     </form>
 </div>

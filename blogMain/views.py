@@ -34,11 +34,12 @@ def public(request):
             content = form.cleaned_data['content']
 
             BlogPost.objects.create(title=title, category_id=category, content=content, auther=request.user)
+            blog_id = BlogPost.objects.latest('id').id
 
             print(title, category, content, request.user)
-            return JsonResponse({'code': 200, 'message': 'success'})
+            return JsonResponse({'code': 200, 'message': 'success', 'blog_id': blog_id})
         else:
             form_errors = form.errors.as_json()
             print(form_errors)
-            return JsonResponse({'code': 400, 'message': 'error'})
+            return JsonResponse({'code': 400, 'message': 'error', 'form_errors': form_errors})
 
