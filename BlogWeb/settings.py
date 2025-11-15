@@ -140,3 +140,5 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = '1739645729@qq.com'
 EMAIL_HOST_PASSWORD = 'ydwbmvwvqbdddjji'
 DEFAULT_FROM_EMAIL = '1739645729@qq.com'
+
+LOGIN_URL = "/auth/login/"

@@ -23,3 +23,8 @@ class RegisterForm(forms.Form):
             raise forms.ValidationError('验证码错误')
         captcha.delete()
         return code
+
+class LoginForm(forms.Form):
+    email = forms.EmailField(max_length=254, required=True,error_messages={'required': '邮箱不能为空', 'invalid': '邮箱格式不正确'})
+    password = forms.CharField(max_length=20, min_length=4, required=True,error_messages={'required': '密码不能为空', 'max_length': '密码过长', 'min_length': '密码过短'})
+    remember = forms.IntegerField(required=False)

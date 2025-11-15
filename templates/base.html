@@ -25,9 +25,8 @@
 
                 <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                     <li><a href="#" class="nav-link px-2 text-secondary">主页</a></li>
-                    <li><a href="#" class="nav-link px-2 text-white">广场</a></li>
-                    <li><a href="#" class="nav-link px-2 text-white">MAN！</a></li>
-                    <li><a href="#" class="nav-link px-2 text-white">问题</a></li>
+                    <li><a href="{% url 'blogMain:blogMain_index' %}" class="nav-link px-2 text-white">广场</a></li>
+                    <li><a href="{% url 'blogMain:blogMain_public' %}" class="nav-link px-2 text-white">发布</a></li>
                     <li><a href="#" class="nav-link px-2 text-white">关于</a></li>
                 </ul>
 
@@ -36,10 +35,32 @@
                         placeholder="搜索..." aria-label="Search">
                 </form>
 
-                <div class="text-end">
-                    <button type="button" class="btn btn-outline-light me-2">登录</button>
-                    <button type="button" class="btn btn-warning">注册</button>
+                {% if user.is_authenticated %}
+                <div class="dropdown text-end">
+                    <a href="#" class="d-block link-light text-decoration-none dropdown-toggle"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="{% static 'image/logo_img.png' %}" alt="用户头像" width="32" height="32"
+                            class="rounded-circle border border-secondary">
+                    </a>
+                    <!-- 使用 Bootstrap 内置的 dropdown-menu-dark 类实现深色菜单 -->
+                    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-small">
+                        <!-- <li><a class="dropdown-item" href="#">New project...</a></li>
+                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li><a class="dropdown-item" href="#">Profile</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li> -->
+                        <li><a class="dropdown-item text-danger" href="{% url 'blogAuth:blogAuth_logout' %}">Sign out</a></li>
+                    </ul>
                 </div>
+                {% else %}
+                <div class="text-end">
+                    <a href="{% url 'blogAuth:blogAuth_login' %}" class="btn btn-outline-light me-2">登录</a>
+                    <a href="{% url 'blogAuth:blogAuth_register' %}" class="btn btn-warning">注册</a>
+                </div>
+                {% endif %}
+
+
             </div>
         </div>
     </header>
