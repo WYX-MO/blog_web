@@ -16,12 +16,10 @@
     /* 工具栏背景 */
     .w-e-toolbar {
         background-color: #ffbc41 !important;
-
-        /* 橙色工具栏 */
         border: none !important;
     }
 
-    /* 编辑区域背景 */
+    /* 编辑区域背景和默认文字色 */
     .w-e-text-container {
         background-color: #404141 !important;
         color: #ffffff !important;
@@ -29,7 +27,33 @@
 
     #editor-container {
         height: 300px;
+    }
 
+
+
+    /* 代码块内文字 */
+    .w-e-text-container code {
+        color: #000000 !important;
+        /* 浅灰色文字（清晰可见） */
+        font-family: 'Consolas', 'Monaco', monospace !important;
+        /* 等宽字体，更适合代码 */
+        font-size: 14px !important;
+    }
+
+    /* 可选：代码块语法高亮优化（如果启用了语法高亮） */
+    /* 关键字颜色 */
+    .w-e-text-container code .keyword {
+        color: #ff6f16 !important;
+    }
+
+    /* 字符串颜色 */
+    .w-e-text-container code .string {
+        color: #f1fa8c !important;
+    }
+
+    /* 注释颜色 */
+    .w-e-text-container code .comment {
+        color: #6272a4 !important;
     }
 </style>
 <script src="{% static 'js/jquery.min.js' %}"></script>

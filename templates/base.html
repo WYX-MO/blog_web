@@ -30,9 +30,9 @@
                     <li><a href="#" class="nav-link px-2 text-white">关于</a></li>
                 </ul>
 
-                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search" method="GET" action="{% url 'blogMain:blogMain_search' %}" >
                     <input type="search" class="form-control form-control-dark text-bg-dark text-white"
-                        placeholder="搜索..." aria-label="Search">
+                        placeholder="搜索..." aria-label="Search" name="q">
                 </form>
 
                 {% if user.is_authenticated %}
