@@ -15,7 +15,8 @@ from django.db.models import Q
 
 
 def index(request):
-    return render(request, 'index.html')
+    
+    return render(request, 'index.html', {'blogs': BlogPost.objects.all()})
 
 
 def detail(request, blog_id):
