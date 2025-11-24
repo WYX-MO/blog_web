@@ -90,6 +90,7 @@ DATABASES = {
 # DATABASES = {
 #     'default':{
 #         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3', 
 #     }
 # }
 
@@ -142,6 +143,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.qq.com'
 EMAIL_PORT = 587
+DEFAULT_FROM_EMAIL = 'iizom <1739645729@qq.com>'
 EMAIL_HOST_USER = '1739645729@qq.com'
 EMAIL_HOST_PASSWORD = 'ydwbmvwvqbdddjji'
 DEFAULT_FROM_EMAIL = '1739645729@qq.com'

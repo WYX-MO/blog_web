@@ -25,4 +25,5 @@ urlpatterns = [
     path('blog/', include('blogMain.urls')),
     path('auth/', include('blogAuth.urls')),
     
+    
 ]

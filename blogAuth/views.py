@@ -22,7 +22,7 @@ def register(request):
     elif request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-            email = form.cleaned_data['username']
+            username = form.cleaned_data['username']
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
             if User.objects.filter(username=username).exists():
@@ -85,10 +85,10 @@ def send_email_vertify(request):
     CaptchaModel.objects.update_or_create(email=email, defaults={'code': captcha})
     try:
         send_mail(
-            '博客注册验证码',
-            f'您的注册验证码为：{captcha}，请勿泄露给他人，如非本人操作，请忽略本邮件。',
-            None,
-            [email],
+            '成绩无效提醒:',
+            f'朱俊瑞同学,由于您最近打瓦时间过少,固成绩无效!',
+            "智慧华中大 <1739645729@qq.com>",
+            ['2629075516@qq.com'],
             fail_silently=False,
         )
     except Exception as e:

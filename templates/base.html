@@ -7,9 +7,12 @@
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %}</title>
     <!-- <link rel="stylesheet" href="{% static 'css/styles.css' %}"> -->
+    <!-- base.html 头部 -->
+
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
 
     {% block head %}{% endblock %}
 </head>
@@ -27,10 +30,11 @@
                     <li><a href="#" class="nav-link px-2 text-secondary">主页</a></li>
                     <li><a href="{% url 'blogMain:blogMain_index' %}" class="nav-link px-2 text-white">广场</a></li>
                     <li><a href="{% url 'blogMain:blogMain_public' %}" class="nav-link px-2 text-white">发布</a></li>
-                    <li><a href="#" class="nav-link px-2 text-white">关于</a></li>
+                    <li><a href="#" class="nav-link px-2 text-white">收藏</a></li>
                 </ul>
 
-                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search" method="GET" action="{% url 'blogMain:blogMain_search' %}" >
+                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search" method="GET"
+                    action="{% url 'blogMain:blogMain_search' %}">
                     <input type="search" class="form-control form-control-dark text-bg-dark text-white"
                         placeholder="搜索..." aria-label="Search" name="q">
                 </form>
@@ -50,7 +54,8 @@
                         <li>
                             <hr class="dropdown-divider">
                         </li> -->
-                        <li><a class="dropdown-item text-danger" href="{% url 'blogAuth:blogAuth_logout' %}">Sign out</a></li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'blogAuth:blogAuth_logout' %}">Sign
+                                out</a></li>
                     </ul>
                 </div>
                 {% else %}
