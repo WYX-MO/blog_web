@@ -7,11 +7,68 @@
 {% block head %}
 <link rel="stylesheet" href="{% static 'highlight/styles/github-dark.css' %}">
 <script src="{% static 'highlight/highlight.min.js' %}"></script>
+<script>
+    $(function () {
+        var isAuthenticated = "{{ request.user.is_authenticated }}" === "True";
 
+        $(document).on("click", ".star-btn", function () {
+            const $btn = $(this);
+            const articleId = $btn.data("article-id"); // 获取当前博客ID
+
+            if (!isAuthenticated) {
+                window.location.href = "{% url 'blogAuth:blogAuth_login' %}";
+                return;
+            }
+
+            $btn.prop("disabled", true).text("处理中...");
+
+            $.ajax({
+                url: "{% url 'blogMain:toggle_star' %}",
+                type: "POST",
+                data: {
+                    "article_id": articleId,
+                    "csrfmiddlewaretoken": "{{ csrf_token }}"
+                },
+                dataType: "json",
+                success: function (res) {
+                    if (res.status === "success") {
+                        $btn.text(res.new_btn_text);
+                        // 关键修复：根据当前博客ID，定位唯一的收藏数元素
+                        $("#star-count-" + articleId).text(res.new_count);
+                    } else {
+                        alert(res.msg || "操作失败，请重试");
+                    }
+                },
+                error: function () {
+                    alert("网络错误，请检查连接");
+                },
+                complete: function () {
+                    $btn.prop("disabled", false);
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}
 
 {% block main %}
-<h1>博客详情页</h1>
+<!-- 核心：flex + space-between 实现左右分布，width:100% 占满父容器宽度 -->
+<div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+    <h1 style="margin: 0;">博客详情页</h1> <!-- 清除h1默认margin避免换行 -->
+    <button type="button" class="btn btn-warning star-btn" data-article-id="{{ blog.id }}">
+        {% if request.user.is_authenticated %}
+            {% if blog.id in stars %}
+            取消收藏
+            {% else %}
+            收藏
+            {% endif %}
+        {% else %}
+            请登录收藏
+        {% endif %}
+    </button>
+</div>
+
+
 <hr>
 <div class="mt-2">
     <img src="{% static 'image/logo_img.png' %}" alt="Author Avatar" width="30" height="30"
@@ -42,7 +99,7 @@
 
 <hr>
 <div class="mt-2">
-    <h3 class="text-white">评论({{ blog.comments.count }})</h3>
+    <h3 class="text-white" id="star-count-{{ blog.id }}">{{ blog.comments.count }} 条评论 {{ blog.stars }} 个收藏</h3>
     <form action="{% url 'blogMain:blogMain_comment' %}" method="post">
         {% csrf_token %}
         <input type="hidden" name="blog_id" value="{{ blog.id }}">

@@ -13,7 +13,24 @@
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script>
+        $(function () {
+            var isAuthenticated = "{{ request.user.is_authenticated }}" === "True";
 
+            $(document).on("click", "#star-show", function (e) {
+                e.preventDefault(); // 阻止<a>标签默认跳转
+                const $a = $(this);
+
+                if (!isAuthenticated) {
+                    window.location.href = "{% url 'blogAuth:blogAuth_login' %}";
+                    return;
+                }
+
+                // 跳转到index页面，URL参数传递?flag=1
+                window.location.href = "{% url 'blogMain:blogMain_search' %}?q=user_stared_114";
+            });
+        });
+    </script>
     {% block head %}{% endblock %}
 </head>
 
@@ -30,7 +47,7 @@
                     <li><a href="#" class="nav-link px-2 text-secondary">主页</a></li>
                     <li><a href="{% url 'blogMain:blogMain_index' %}" class="nav-link px-2 text-white">广场</a></li>
                     <li><a href="{% url 'blogMain:blogMain_public' %}" class="nav-link px-2 text-white">发布</a></li>
-                    <li><a href="#" class="nav-link px-2 text-white">收藏</a></li>
+                    <li><a href="#" class="nav-link px-2 text-white" id="star-show">收藏</a></li>
                 </ul>
 
                 <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search" method="GET"

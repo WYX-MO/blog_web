@@ -41,8 +41,15 @@ def detail(request, blog_id):
         blog = BlogPost.objects.get(pk=blog_id)
     except BlogPost.DoesNotExist:
         return JsonResponse({'code': 404, 'message': 'blog not found'})
-    
-    return render(request, 'blog_detail.html', {'blog': blog})
+    stars = []
+    if request.user.is_authenticated:
+        stars = Star_table.objects.filter(
+            user_id=request.user.id
+        ).values_list('blog_id', flat=True)
+    for s in stars:
+        s = int(s)
+    print(stars)
+    return render(request, 'blog_detail.html', {'blog': blog, 'stars': stars})
 
 
 # @login_required(login_url=reverse_lazy('blogAuth:blogAuth_login'))#django包含的登录装饰器，未登录用户访问会跳转到登录页面
@@ -85,9 +92,13 @@ def comment(request):
 @require_GET
 def search(request):
     q = request.GET.get('q')
-    blogs = BlogPost.objects.filter(Q(title__icontains=q) | Q(content__icontains=q)).all()
+    if q == 'user_stared_114':
+        stars = Star_table.objects.filter(user_id=request.user.id).values_list('blog_id', flat=True)
+        blogs = BlogPost.objects.filter(id__in=stars).all()
+    else:
+        blogs = BlogPost.objects.filter(Q(title__icontains=q) | Q(content__icontains=q)).all()
     print(blogs)
-    return render(request, 'index.html', {'blogs': blogs})
+    return render(request, 'index.html', {'blogs': blogs, 'stars': stars})
 
 def decoy(request):
     return render (request, "decoy.html")
@@ -132,7 +143,7 @@ def toggle_star(request):
         return JsonResponse({
             "status": "success",
             "new_btn_text": new_btn_text,
-            "new_count": f"{article.comments.count()} 条评论 {article.stars}个收藏"
+            "new_count": f"{article.comments.count()} 条评论 {article.stars} 个收藏"
         })
     
     except Exception as e:
