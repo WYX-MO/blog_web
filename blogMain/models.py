@@ -16,6 +16,7 @@ class BlogPost(models.Model):
     publicTime = models.DateTimeField(auto_now_add=True)
     category = models.ForeignKey(BlogCategory, on_delete=models.SET_DEFAULT,default=1)
     auther = models.ForeignKey('auth.User', on_delete=models.SET_DEFAULT,default=1)
+    stars = models.IntegerField(default=0)
     class Meta:
         db_table = 'blog_post'
         ordering = ['-publicTime']
@@ -35,8 +36,8 @@ class BlogComment(models.Model):
     
 
 class Star_table(models.Model):
-    user_id = models.CharField(max_length=100,null = False)
-    blog_id = models.CharField(max_length=100,null = False)
+    user_id = models.IntegerField(null = False)
+    blog_id = models.IntegerField(null = False)
     stared_time = models.DateTimeField(auto_now_add=True)
     class Meta:
         db_table = 'star_table'

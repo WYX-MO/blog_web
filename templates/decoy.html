@@ -1,534 +1,589 @@
+<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-    <meta name="generator" content="Hugo 0.108.0">
-    <title>Product example · Bootstrap v5 中文文档 v5.3</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>极致视觉体验 | 3D流体交互网页</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome图标 -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 引入Three.js（3D交互核心） -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
 
-    <link rel="canonical" href="https://v5.bootcss.com/docs/examples/product/">
-
-
-
-
-
-    <link href="/docs/5.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-
-    <!-- Favicons -->
-    <link rel="apple-touch-icon" href="/docs/5.3/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
-    <link rel="icon" href="/docs/5.3/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
-    <link rel="icon" href="/docs/5.3/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
-    <link rel="manifest" href="/docs/5.3/assets/img/favicons/manifest.json">
-    <link rel="mask-icon" href="/docs/5.3/assets/img/favicons/safari-pinned-tab.svg" color="#712cf9">
-    <link rel="icon" href="/docs/5.3/assets/img/favicons/favicon.ico">
-    <meta name="theme-color" content="#712cf9">
-
-
-    <style>
-        .bd-placeholder-img {
-            font-size: 1.125rem;
-            text-anchor: middle;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            user-select: none;
-        }
-
-        @media (min-width: 768px) {
-            .bd-placeholder-img-lg {
-                font-size: 3.5rem;
+    <!-- 自定义配置 -->
+    <script>
+        // Tailwind自定义主题
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366F1', // 主色（紫蓝渐变）
+                        secondary: '#EC4899', // 辅助色（粉红）
+                        dark: '#111827',
+                        light: '#F9FAFB',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                },
             }
         }
+    </script>
 
-        .b-example-divider {
-            height: 3rem;
-            background-color: rgba(0, 0, 0, .1);
-            border: solid rgba(0, 0, 0, .15);
-            border-width: 1px 0;
-            box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
-        }
-
-        .b-example-vr {
-            flex-shrink: 0;
-            width: 1.5rem;
-            height: 100vh;
-        }
-
-        .bi {
-            vertical-align: -.125em;
-            fill: currentColor;
-        }
-
-        .nav-scroller {
-            position: relative;
-            z-index: 2;
-            height: 2.75rem;
-            overflow-y: hidden;
-        }
-
-        .nav-scroller .nav {
-            display: flex;
-            flex-wrap: nowrap;
-            padding-bottom: 1rem;
-            margin-top: -1px;
-            overflow-x: auto;
-            text-align: center;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
+    <!-- 自定义样式 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            /* 自定义工具类 */
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-gradient {
+                background-clip: text;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+            .bg-glass {
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+            }
+            .card-3d {
+                transform-style: preserve-3d;
+                perspective: 1000px;
+            }
+            .card-3d-inner {
+                transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            }
+            .shadow-neon {
+                box-shadow: 0 0 15px rgba(99, 102, 241, 0.5), 0 0 30px rgba(236, 72, 153, 0.3);
+            }
+            .gradient-bg {
+                background: linear-gradient(135deg, #6366F1 0%, #EC4899 50%, #8B5CF6 100%);
+                background-size: 400% 400%;
+                animation: gradient 15s ease infinite;
+            }
+            @keyframes gradient {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+            }
         }
     </style>
-
-
-    <!-- Custom styles for this template -->
-    <link href="product.css" rel="stylesheet">
 </head>
 
-<body>
+<body class="font-inter antialiased transition-colors duration-500 dark:bg-dark dark:text-light bg-light text-dark">
+    <!-- 流体渐变背景（全屏） -->
+    <div id="gradient-bg" class="fixed inset-0 gradient-bg opacity-90 dark:opacity-80 z-0"></div>
 
-    <header class="site-header sticky-top py-1">
-        <nav class="container d-flex flex-column flex-md-row justify-content-between">
-            <a class="py-2" href="#" aria-label="Product">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
-                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="d-block mx-auto" role="img"
-                    viewBox="0 0 24 24">
-                    <title>Product</title>
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path
-                        d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83m13.79-4l-5.74 9.94">
-                    </path>
-                </svg>
-            </a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Tour</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Product</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Features</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Enterprise</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Support</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Pricing</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Cart</a>
-        </nav>
-    </header>
+    <!-- 3D场景容器 -->
+    <div id="three-container" class="fixed inset-0 z-0 opacity-20 dark:opacity-10"></div>
 
-    <main>
-        <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
-            <div class="col-md-5 p-lg-5 mx-auto my-5">
-                <h1 class="display-4 fw-normal">Punny headline</h1>
-                <p class="lead fw-normal">And an even wittier subheading to boot. Jumpstart your marketing efforts with
-                    this example based on Apple’s marketing pages.</p>
-                <a class="btn btn-outline-secondary" href="#">Coming soon</a>
-            </div>
-            <div class="product-device shadow-sm d-none d-md-block"></div>
-            <div class="product-device product-device-2 shadow-sm d-none d-md-block"></div>
-        </div>
-
-        <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
-            <div class="text-bg-dark me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-                <div class="my-3 py-3">
-                    <h2 class="display-5">Another headline</h2>
-                    <p class="lead">And an even wittier subheading.</p>
+    <!-- 导航栏（玻璃拟态） -->
+    <nav
+        class="fixed top-0 left-0 w-full z-50 bg-glass bg-white/10 dark:bg-dark/20 border-b border-white/10 dark:border-dark/30">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-full gradient-bg shadow-neon"></div>
+                    <span
+                        class="text-xl font-bold text-gradient bg-gradient-to-r from-primary to-secondary">Nexus</span>
                 </div>
-                <div class="bg-light shadow-sm mx-auto"
-                    style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
-            </div>
-            <div class="bg-light me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-                <div class="my-3 p-3">
-                    <h2 class="display-5">Another headline</h2>
-                    <p class="lead">And an even wittier subheading.</p>
+
+                <!-- 导航菜单（桌面） -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="font-medium hover:text-primary transition-colors">首页</a>
+                    <a href="#features" class="font-medium hover:text-primary transition-colors">特性</a>
+                    <a href="#showcase" class="font-medium hover:text-primary transition-colors">展示</a>
+                    <a href="#contact" class="font-medium hover:text-primary transition-colors">联系</a>
                 </div>
-                <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
+
+                <!-- 功能按钮 -->
+                <div class="flex items-center space-x-4">
+                    <!-- 暗黑模式切换 -->
+                    <button id="theme-toggle"
+                        class="p-2 rounded-full hover:bg-white/10 dark:hover:bg-dark/30 transition-colors">
+                        <i class="fa fa-moon-o dark:hidden text-xl"></i>
+                        <i class="fa fa-sun-o hidden dark:block text-xl"></i>
+                    </button>
+
+                    <!-- 移动端菜单按钮 -->
+                    <button id="mobile-menu-btn"
+                        class="md:hidden p-2 rounded-full hover:bg-white/10 dark:hover:bg-dark/30 transition-colors">
+                        <i class="fa fa-bars text-xl"></i>
+                    </button>
+
+                    <!-- 主按钮 -->
+                    <a href="#contact"
+                        class="hidden sm:block px-6 py-2 rounded-full gradient-bg font-medium shadow-neon hover:shadow-lg transition-shadow">
+                        立即体验
+                    </a>
                 </div>
             </div>
         </div>
 
-        <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
-            <div class="bg-light me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-                <div class="my-3 p-3">
-                    <h2 class="display-5">Another headline</h2>
-                    <p class="lead">And an even wittier subheading.</p>
-                </div>
-                <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
-                </div>
-            </div>
-            <div class="text-bg-primary me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-                <div class="my-3 py-3">
-                    <h2 class="display-5">Another headline</h2>
-                    <p class="lead">And an even wittier subheading.</p>
-                </div>
-                <div class="bg-light shadow-sm mx-auto"
-                    style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu"
+            class="md:hidden hidden bg-glass bg-white/10 dark:bg-dark/20 border-b border-white/10 dark:border-dark/30">
+            <div class="container mx-auto px-4 py-3 space-y-3">
+                <a href="#home" class="block py-2 font-medium hover:text-primary transition-colors">首页</a>
+                <a href="#features" class="block py-2 font-medium hover:text-primary transition-colors">特性</a>
+                <a href="#showcase" class="block py-2 font-medium hover:text-primary transition-colors">展示</a>
+                <a href="#contact" class="block py-2 font-medium hover:text-primary transition-colors">联系</a>
+                <a href="#contact"
+                    class="block px-6 py-2 rounded-full gradient-bg font-medium shadow-neon text-center">立即体验</a>
             </div>
         </div>
+    </nav>
 
-        <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
-            <div class="bg-light me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-                <div class="my-3 p-3">
-                    <h2 class="display-5">Another headline</h2>
-                    <p class="lead">And an even wittier subheading.</p>
+    <!-- 主内容区 -->
+    <main class="relative z-10 pt-24 pb-16">
+        <!-- 首页英雄区 -->
+        <section id="home" class="container mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <!-- 文字内容 -->
+                <div class="md:w-1/2 space-y-6">
+                    <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-bold leading-tight">
+                        <span class="text-gradient bg-gradient-to-r from-primary to-secondary">重新定义</span>
+                        <br>网页交互体验
+                    </h1>
+                    <p class="text-lg md:text-xl opacity-80 dark:opacity-90 max-w-lg">
+                        融合3D视觉、流体渐变和沉浸式交互，打造下一代网页体验，性能与颜值并存，适配全设备。
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="#features"
+                            class="px-8 py-3 rounded-full gradient-bg font-medium shadow-neon hover:shadow-lg transition-shadow text-lg">
+                            探索特性
+                        </a>
+                        <a href="#showcase"
+                            class="px-8 py-3 rounded-full bg-white/10 dark:bg-dark/30 border border-white/20 dark:border-dark/40 font-medium hover:bg-white/20 dark:hover:bg-dark/40 transition-colors text-lg">
+                            查看案例
+                        </a>
+                    </div>
+                    <div class="flex items-center space-x-6 pt-4">
+                        <div class="flex -space-x-2">
+                            <img src="https://picsum.photos/200/200?random=1" alt="用户头像"
+                                class="w-10 h-10 rounded-full border-2 border-white dark:border-dark">
+                            <img src="https://picsum.photos/200/200?random=2" alt="用户头像"
+                                class="w-10 h-10 rounded-full border-2 border-white dark:border-dark">
+                            <img src="https://picsum.photos/200/200?random=3" alt="用户头像"
+                                class="w-10 h-10 rounded-full border-2 border-white dark:border-dark">
+                        </div>
+                        <div class="text-sm opacity-80 dark:opacity-90">
+                            <span class="font-bold">1000+</span> 开发者正在使用
+                        </div>
+                    </div>
                 </div>
-                <div class="bg-body shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
-                </div>
-            </div>
-            <div class="bg-light me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-                <div class="my-3 py-3">
-                    <h2 class="display-5">Another headline</h2>
-                    <p class="lead">And an even wittier subheading.</p>
-                </div>
-                <div class="bg-body shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
-                </div>
-            </div>
-        </div>
 
-        <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
-            <div class="bg-light me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-                <div class="my-3 p-3">
-                    <h2 class="display-5">Another headline</h2>
-                    <p class="lead">And an even wittier subheading.</p>
-                </div>
-                <div class="bg-body shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
-                </div>
-            </div>
-            <div class="bg-light me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-                <div class="my-3 py-3">
-                    <h2 class="display-5">Another headline</h2>
-                    <p class="lead">And an even wittier subheading.</p>
-                </div>
-                <div class="bg-body shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
+                <!-- 3D交互卡片 -->
+                <div class="md:w-1/2 card-3d">
+                    <div id="interactive-card"
+                        class="card-3d-inner w-full max-w-md mx-auto bg-white/10 dark:bg-dark/30 rounded-3xl p-6 border border-white/10 dark:border-dark/40 shadow-neon hover:shadow-xl transition-all">
+                        <div class="aspect-square rounded-2xl overflow-hidden mb-6">
+                            <img src="https://picsum.photos/800/800?random=4" alt="3D展示图"
+                                class="w-full h-full object-cover rounded-2xl animate-float">
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">3D流体交互</h3>
+                        <p class="opacity-80 dark:opacity-90">
+                            鼠标移动时卡片会跟随旋转，结合流体渐变背景，打造沉浸式视觉体验。
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
+
+        <!-- 特性区 -->
+        <section id="features" class="container mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-[clamp(2rem,4vw,3rem)] font-bold mb-4">
+                    <span class="text-gradient bg-gradient-to-r from-primary to-secondary">核心特性</span>
+                </h2>
+                <p class="text-lg opacity-80 dark:opacity-90">
+                    每一个细节都为极致体验设计，兼顾性能与美感
+                </p>
+            </div>
+
+            <!-- 特性卡片网格 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- 特性卡片1 -->
+                <div
+                    class="bg-white/10 dark:bg-dark/30 rounded-2xl p-6 border border-white/10 dark:border-dark/40 hover:shadow-neon transition-all card-3d">
+                    <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center mb-6">
+                        <i class="fa fa-magic text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">流体渐变</h3>
+                    <p class="opacity-80 dark:opacity-90">
+                        动态渐变背景随时间和鼠标交互变化，支持暗黑/亮色模式无缝适配。
+                    </p>
+                </div>
+
+                <!-- 特性卡片2 -->
+                <div
+                    class="bg-white/10 dark:bg-dark/30 rounded-2xl p-6 border border-white/10 dark:border-dark/40 hover:shadow-neon transition-all card-3d">
+                    <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center mb-6">
+                        <i class="fa fa-cube text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">3D交互</h3>
+                    <p class="opacity-80 dark:opacity-90">
+                        基于Three.js实现的3D场景，卡片支持透视旋转，打造沉浸式体验。
+                    </p>
+                </div>
+
+                <!-- 特性卡片3 -->
+                <div
+                    class="bg-white/10 dark:bg-dark/30 rounded-2xl p-6 border border-white/10 dark:border-dark/40 hover:shadow-neon transition-all card-3d">
+                    <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center mb-6">
+                        <i class="fa fa-mobile text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">全响应式</h3>
+                    <p class="opacity-80 dark:opacity-90">
+                        完美适配手机、平板、桌面设备，布局自动调整，交互体验一致。
+                    </p>
+                </div>
+
+                <!-- 特性卡片4 -->
+                <div
+                    class="bg-white/10 dark:bg-dark/30 rounded-2xl p-6 border border-white/10 dark:border-dark/40 hover:shadow-neon transition-all card-3d">
+                    <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center mb-6">
+                        <i class="fa fa-moon-o text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">暗黑模式</h3>
+                    <p class="opacity-80 dark:opacity-90">
+                        一键切换暗黑/亮色模式，所有元素无缝过渡，符合系统级设计规范。
+                    </p>
+                </div>
+
+                <!-- 特性卡片5 -->
+                <div
+                    class="bg-white/10 dark:bg-dark/30 rounded-2xl p-6 border border-white/10 dark:border-dark/40 hover:shadow-neon transition-all card-3d">
+                    <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center mb-6">
+                        <i class="fa fa-bolt text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">极致性能</h3>
+                    <p class="opacity-80 dark:opacity-90">
+                        优化动画性能，60fps流畅运行，内容懒加载，降低资源占用。
+                    </p>
+                </div>
+
+                <!-- 特性卡片6 -->
+                <div
+                    class="bg-white/10 dark:bg-dark/30 rounded-2xl p-6 border border-white/10 dark:border-dark/40 hover:shadow-neon transition-all card-3d">
+                    <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center mb-6">
+                        <i class="fa fa-paint-brush text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">玻璃拟态</h3>
+                    <p class="opacity-80 dark:opacity-90">
+                        采用玻璃拟态设计，半透明模糊效果，层次分明，视觉更具深度。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 展示区 -->
+        <section id="showcase" class="container mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-[clamp(2rem,4vw,3rem)] font-bold mb-4">
+                    <span class="text-gradient bg-gradient-to-r from-primary to-secondary">视觉展示</span>
+                </h2>
+                <p class="text-lg opacity-80 dark:opacity-90">
+                    每一个像素都经过精心设计，呈现极致视觉效果
+                </p>
+            </div>
+
+            <!-- 展示图片网格 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="rounded-2xl overflow-hidden group hover:shadow-neon transition-all">
+                    <img src="https://picsum.photos/800/600?random=5" alt="展示图1"
+                        class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <div class="rounded-2xl overflow-hidden group hover:shadow-neon transition-all">
+                    <img src="https://picsum.photos/800/600?random=6" alt="展示图2"
+                        class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <div class="rounded-2xl overflow-hidden group hover:shadow-neon transition-all">
+                    <img src="https://picsum.photos/800/600?random=7" alt="展示图3"
+                        class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <div class="rounded-2xl overflow-hidden group hover:shadow-neon transition-all">
+                    <img src="https://picsum.photos/800/600?random=8" alt="展示图4"
+                        class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <div class="rounded-2xl overflow-hidden group hover:shadow-neon transition-all">
+                    <img src="https://picsum.photos/800/600?random=9" alt="展示图5"
+                        class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <div class="rounded-2xl overflow-hidden group hover:shadow-neon transition-all">
+                    <img src="https://picsum.photos/800/600?random=10" alt="展示图6"
+                        class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+            </div>
+        </section>
+
+        <!-- 联系区 -->
+        <section id="contact" class="container mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+            <div
+                class="max-w-4xl mx-auto bg-white/10 dark:bg-dark/30 rounded-3xl p-8 md:p-12 border border-white/10 dark:border-dark/40 shadow-neon">
+                <div class="text-center mb-10">
+                    <h2 class="text-[clamp(2rem,4vw,3rem)] font-bold mb-4">
+                        <span class="text-gradient bg-gradient-to-r from-primary to-secondary">联系我们</span>
+                    </h2>
+                    <p class="text-lg opacity-80 dark:opacity-90 max-w-2xl mx-auto">
+                        填写表单，我们将在24小时内回复你，一起打造极致的网页体验
+                    </p>
+                </div>
+
+                <!-- 联系表单 -->
+                <form class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="name" class="block mb-2 font-medium">姓名</label>
+                            <input type="text" id="name"
+                                class="w-full px-4 py-3 rounded-lg bg-white/10 dark:bg-dark/30 border border-white/20 dark:border-dark/40 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-colors"
+                                placeholder="请输入你的姓名">
+                        </div>
+                        <div>
+                            <label for="email" class="block mb-2 font-medium">邮箱</label>
+                            <input type="email" id="email"
+                                class="w-full px-4 py-3 rounded-lg bg-white/10 dark:bg-dark/30 border border-white/20 dark:border-dark/40 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-colors"
+                                placeholder="请输入你的邮箱">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="subject" class="block mb-2 font-medium">主题</label>
+                        <input type="text" id="subject"
+                            class="w-full px-4 py-3 rounded-lg bg-white/10 dark:bg-dark/30 border border-white/20 dark:border-dark/40 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-colors"
+                            placeholder="请输入咨询主题">
+                    </div>
+                    <div>
+                        <label for="message" class="block mb-2 font-medium">留言</label>
+                        <textarea id="message" rows="5"
+                            class="w-full px-4 py-3 rounded-lg bg-white/10 dark:bg-dark/30 border border-white/20 dark:border-dark/40 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-colors resize-none"
+                            placeholder="请输入你的留言内容"></textarea>
+                    </div>
+                    <button type="submit"
+                        class="w-full px-8 py-3 rounded-full gradient-bg font-medium shadow-neon hover:shadow-lg transition-shadow text-lg">
+                        发送留言
+                    </button>
+                </form>
+            </div>
+        </section>
     </main>
 
-    <footer class="container py-5">
-        <div class="row">
-            <div class="col-12 col-md">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
-                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="d-block mb-2" role="img"
-                    viewBox="0 0 24 24">
-                    <title>Product</title>
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path
-                        d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83m13.79-4l-5.74 9.94">
-                    </path>
-                </svg>
-                <small class="d-block mb-3 text-muted">© 2017–2023</small>
-            </div>
-            <div class="col-6 col-md">
-                <h5>Features</h5>
-                <ul class="list-unstyled text-small">
-                    <li><a class="link-secondary" href="#">Cool stuff</a></li>
-                    <li><a class="link-secondary" href="#">Random feature</a></li>
-                    <li><a class="link-secondary" href="#">Team feature</a></li>
-                    <li><a class="link-secondary" href="#">Stuff for developers</a></li>
-                    <li><a class="link-secondary" href="#">Another one</a></li>
-                    <li><a class="link-secondary" href="#">Last time</a></li>
-                </ul>
-            </div>
-            <div class="col-6 col-md">
-                <h5>Resources</h5>
-                <ul class="list-unstyled text-small">
-                    <li><a class="link-secondary" href="#">Resource name</a></li>
-                    <li><a class="link-secondary" href="#">Resource</a></li>
-                    <li><a class="link-secondary" href="#">Another resource</a></li>
-                    <li><a class="link-secondary" href="#">Final resource</a></li>
-                </ul>
-            </div>
-            <div class="col-6 col-md">
-                <h5>Resources</h5>
-                <ul class="list-unstyled text-small">
-                    <li><a class="link-secondary" href="#">Business</a></li>
-                    <li><a class="link-secondary" href="#">Education</a></li>
-                    <li><a class="link-secondary" href="#">Government</a></li>
-                    <li><a class="link-secondary" href="#">Gaming</a></li>
-                </ul>
-            </div>
-            <div class="col-6 col-md">
-                <h5>About</h5>
-                <ul class="list-unstyled text-small">
-                    <li><a class="link-secondary" href="#">Team</a></li>
-                    <li><a class="link-secondary" href="#">Locations</a></li>
-                    <li><a class="link-secondary" href="#">Privacy</a></li>
-                    <li><a class="link-secondary" href="#">Terms</a></li>
-                </ul>
+    <!-- 页脚 -->
+    <footer class="relative z-10 bg-white/10 dark:bg-dark/30 border-t border-white/10 dark:border-dark/40 py-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2 mb-6 md:mb-0">
+                    <div class="w-8 h-8 rounded-full gradient-bg shadow-neon"></div>
+                    <span
+                        class="text-xl font-bold text-gradient bg-gradient-to-r from-primary to-secondary">Nexus</span>
+                </div>
+
+                <!-- 社交图标 -->
+                <div class="flex space-x-6 mb-6 md:mb-0">
+                    <a href="#" class="p-2 rounded-full hover:bg-white/10 dark:hover:bg-dark/30 transition-colors">
+                        <i class="fa fa-github text-xl"></i>
+                    </a>
+                    <a href="#" class="p-2 rounded-full hover:bg-white/10 dark:hover:bg-dark/30 transition-colors">
+                        <i class="fa fa-twitter text-xl"></i>
+                    </a>
+                    <a href="#" class="p-2 rounded-full hover:bg-white/10 dark:hover:bg-dark/30 transition-colors">
+                        <i class="fa fa-linkedin text-xl"></i>
+                    </a>
+                    <a href="#" class="p-2 rounded-full hover:bg-white/10 dark:hover:bg-dark/30 transition-colors">
+                        <i class="fa fa-instagram text-xl"></i>
+                    </a>
+                </div>
+
+                <!-- 版权信息 -->
+                <div class="text-sm opacity-80 dark:opacity-90">
+                    © 2025 Nexus. All rights reserved.
+                </div>
             </div>
         </div>
     </footer>
 
+    <!-- 核心交互JS -->
+    <script>
+        // 1. 暗黑模式切换
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
 
-    <script src="/docs/5.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-/mhDoLbDldZc3qpsJHpLogda//BVZbgYuw6kof4u2FrCedxOtgRZDTHgHUhOCVim"
-        crossorigin="anonymous"></script>
-
-
-
-
-</body>
-<html lang="zh-CN">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-    <meta name="generator" content="Hugo 0.108.0">
-    <title>Product example · Bootstrap v5 中文文档 v5.3</title>
-
-    <link rel="canonical" href="https://v5.bootcss.com/docs/examples/product/">
-
-
-
-
-
-    <link href="/docs/5.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-
-    <!-- Favicons -->
-    <link rel="apple-touch-icon" href="/docs/5.3/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
-    <link rel="icon" href="/docs/5.3/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
-    <link rel="icon" href="/docs/5.3/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
-    <link rel="manifest" href="/docs/5.3/assets/img/favicons/manifest.json">
-    <link rel="mask-icon" href="/docs/5.3/assets/img/favicons/safari-pinned-tab.svg" color="#712cf9">
-    <link rel="icon" href="/docs/5.3/assets/img/favicons/favicon.ico">
-    <meta name="theme-color" content="#712cf9">
-
-
-    <style>
-        .bd-placeholder-img {
-            font-size: 1.125rem;
-            text-anchor: middle;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            user-select: none;
+        // 初始化主题（优先本地存储）
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
         }
 
-        @media (min-width: 768px) {
-            .bd-placeholder-img-lg {
-                font-size: 3.5rem;
+        // 切换主题
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
+        });
+
+        // 2. 移动端菜单切换
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // 3. 3D卡片交互（鼠标跟随旋转）
+        const interactiveCard = document.getElementById('interactive-card');
+        const card3dElements = document.querySelectorAll('.card-3d');
+
+        card3dElements.forEach(card => {
+            const inner = card.querySelector('.card-3d-inner');
+            if (!inner) return;
+
+            card.addEventListener('mousemove', (e) => {
+                // 获取卡片位置和尺寸
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                // 计算旋转角度（范围：-10 ~ 10度）
+                const rotateY = ((x - centerX) / centerX) * 10;
+                const rotateX = ((centerY - y) / centerY) * 10;
+
+                // 应用3D变换
+                inner.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+                // 计算阴影偏移
+                const shadowX = ((x - centerX) / centerX) * 10;
+                const shadowY = ((y - centerY) / centerY) * 10;
+                inner.style.boxShadow = `${shadowX}px ${shadowY}px 30px rgba(99, 102, 241, 0.2), ${shadowX / 2}px ${shadowY / 2}px 15px rgba(236, 72, 153, 0.1)`;
+            });
+
+            // 鼠标离开时重置
+            card.addEventListener('mouseleave', () => {
+                inner.style.transform = 'rotateX(0deg) rotateY(0deg)';
+                inner.style.boxShadow = '';
+            });
+        });
+
+        // 4. 流体背景跟随鼠标
+        const gradientBg = document.getElementById('gradient-bg');
+
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+
+            // 调整背景位置
+            gradientBg.style.backgroundPosition = `${x * 100}% ${y * 100}%`;
+        });
+
+        // 5. Three.js 3D场景
+        function initThreeJS() {
+            const container = document.getElementById('three-container');
+            if (!container) return;
+
+            // 创建场景
+            const scene = new THREE.Scene();
+
+            // 创建相机
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 5;
+
+            // 创建渲染器
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            // 创建控制器
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableZoom = false;
+            controls.enablePan = false;
+            controls.enableRotate = true;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 0.5;
+
+            // 创建几何体（多个球体）
+            const geometry = new THREE.SphereGeometry(0.5, 32, 32);
+            const material = new THREE.MeshBasicMaterial({
+                color: 0x6366F1,
+                transparent: true,
+                opacity: 0.5,
+                wireframe: true
+            });
+
+            // 创建多个球体
+            const spheres = [];
+            for (let i = 0; i < 10; i++) {
+                const sphere = new THREE.Mesh(geometry, material);
+                sphere.position.x = (Math.random() - 0.5) * 20;
+                sphere.position.y = (Math.random() - 0.5) * 20;
+                sphere.position.z = (Math.random() - 0.5) * 20;
+                scene.add(sphere);
+                spheres.push(sphere);
             }
+
+            // 窗口大小适配
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            // 动画循环
+            function animate() {
+                requestAnimationFrame(animate);
+
+                // 球体缓慢旋转
+                spheres.forEach(sphere => {
+                    sphere.rotation.x += 0.005;
+                    sphere.rotation.y += 0.005;
+                });
+
+                controls.update();
+                renderer.render(scene, camera);
+            }
+
+            animate();
         }
 
-        .b-example-divider {
-            height: 3rem;
-            background-color: rgba(0, 0, 0, .1);
-            border: solid rgba(0, 0, 0, .15);
-            border-width: 1px 0;
-            box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
-        }
+        // 初始化Three.js（页面加载完成后）
+        window.addEventListener('load', initThreeJS);
 
-        .b-example-vr {
-            flex-shrink: 0;
-            width: 1.5rem;
-            height: 100vh;
-        }
+        // 6. 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
 
-        .bi {
-            vertical-align: -.125em;
-            fill: currentColor;
-        }
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
 
-        .nav-scroller {
-            position: relative;
-            z-index: 2;
-            height: 2.75rem;
-            overflow-y: hidden;
-        }
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80, // 偏移导航栏高度
+                        behavior: 'smooth'
+                    });
 
-        .nav-scroller .nav {
-            display: flex;
-            flex-wrap: nowrap;
-            padding-bottom: 1rem;
-            margin-top: -1px;
-            overflow-x: auto;
-            text-align: center;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
-        }
-    </style>
-
-
-    <!-- Custom styles for this template -->
-    <link href="product.css" rel="stylesheet">
-</head>
-
-<body>
-
-    <header class="site-header sticky-top py-1">
-        <nav class="container d-flex flex-column flex-md-row justify-content-between">
-            <a class="py-2" href="#" aria-label="Product">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
-                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="d-block mx-auto" role="img"
-                    viewBox="0 0 24 24">
-                    <title>Product</title>
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path
-                        d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83m13.79-4l-5.74 9.94">
-                    </path>
-                </svg>
-            </a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Tour</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Product</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Features</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Enterprise</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Support</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Pricing</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Cart</a>
-        </nav>
-    </header>
-
-    <main>
-        <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
-            <div class="col-md-5 p-lg-5 mx-auto my-5">
-                <h1 class="display-4 fw-normal">Punny headline</h1>
-                <p class="lead fw-normal">And an even wittier subheading to boot. Jumpstart your marketing efforts with
-                    this example based on Apple’s marketing pages.</p>
-                <a class="btn btn-outline-secondary" href="#">Coming soon</a>
-            </div>
-            <div class="product-device shadow-sm d-none d-md-block"></div>
-            <div class="product-device product-device-2 shadow-sm d-none d-md-block"></div>
-        </div>
-
-        <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
-            <div class="text-bg-dark me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-                <div class="my-3 py-3">
-                    <h2 class="display-5">Another headline</h2>
-                    <p class="lead">And an even wittier subheading.</p>
-                </div>
-                <div class="bg-light shadow-sm mx-auto"
-                    style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
-            </div>
-            <div class="bg-light me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-                <div class="my-3 p-3">
-                    <h2 class="display-5">Another headline</h2>
-                    <p class="lead">And an even wittier subheading.</p>
-                </div>
-                <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
-                </div>
-            </div>
-        </div>
-
-        <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
-            <div class="bg-light me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-                <div class="my-3 p-3">
-                    <h2 class="display-5">Another headline</h2>
-                    <p class="lead">And an even wittier subheading.</p>
-                </div>
-                <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
-                </div>
-            </div>
-            <div class="text-bg-primary me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-                <div class="my-3 py-3">
-                    <h2 class="display-5">Another headline</h2>
-                    <p class="lead">And an even wittier subheading.</p>
-                </div>
-                <div class="bg-light shadow-sm mx-auto"
-                    style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
-            </div>
-        </div>
-
-        <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
-            <div class="bg-light me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-                <div class="my-3 p-3">
-                    <h2 class="display-5">Another headline</h2>
-                    <p class="lead">And an even wittier subheading.</p>
-                </div>
-                <div class="bg-body shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
-                </div>
-            </div>
-            <div class="bg-light me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-                <div class="my-3 py-3">
-                    <h2 class="display-5">Another headline</h2>
-                    <p class="lead">And an even wittier subheading.</p>
-                </div>
-                <div class="bg-body shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
-                </div>
-            </div>
-        </div>
-
-        <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
-            <div class="bg-light me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-                <div class="my-3 p-3">
-                    <h2 class="display-5">Another headline</h2>
-                    <p class="lead">And an even wittier subheading.</p>
-                </div>
-                <div class="bg-body shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
-                </div>
-            </div>
-            <div class="bg-light me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-                <div class="my-3 py-3">
-                    <h2 class="display-5">Another headline</h2>
-                    <p class="lead">And an even wittier subheading.</p>
-                </div>
-                <div class="bg-body shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <footer class="container py-5">
-        <div class="row">
-            <div class="col-12 col-md">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
-                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="d-block mb-2" role="img"
-                    viewBox="0 0 24 24">
-                    <title>Product</title>
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path
-                        d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83m13.79-4l-5.74 9.94">
-                    </path>
-                </svg>
-                <small class="d-block mb-3 text-muted">© 2017–2023</small>
-            </div>
-            <div class="col-6 col-md">
-                <h5>Features</h5>
-                <ul class="list-unstyled text-small">
-                    <li><a class="link-secondary" href="#">Cool stuff</a></li>
-                    <li><a class="link-secondary" href="#">Random feature</a></li>
-                    <li><a class="link-secondary" href="#">Team feature</a></li>
-                    <li><a class="link-secondary" href="#">Stuff for developers</a></li>
-                    <li><a class="link-secondary" href="#">Another one</a></li>
-                    <li><a class="link-secondary" href="#">Last time</a></li>
-                </ul>
-            </div>
-            <div class="col-6 col-md">
-                <h5>Resources</h5>
-                <ul class="list-unstyled text-small">
-                    <li><a class="link-secondary" href="#">Resource name</a></li>
-                    <li><a class="link-secondary" href="#">Resource</a></li>
-                    <li><a class="link-secondary" href="#">Another resource</a></li>
-                    <li><a class="link-secondary" href="#">Final resource</a></li>
-                </ul>
-            </div>
-            <div class="col-6 col-md">
-                <h5>Resources</h5>
-                <ul class="list-unstyled text-small">
-                    <li><a class="link-secondary" href="#">Business</a></li>
-                    <li><a class="link-secondary" href="#">Education</a></li>
-                    <li><a class="link-secondary" href="#">Government</a></li>
-                    <li><a class="link-secondary" href="#">Gaming</a></li>
-                </ul>
-            </div>
-            <div class="col-6 col-md">
-                <h5>About</h5>
-                <ul class="list-unstyled text-small">
-                    <li><a class="link-secondary" href="#">Team</a></li>
-                    <li><a class="link-secondary" href="#">Locations</a></li>
-                    <li><a class="link-secondary" href="#">Privacy</a></li>
-                    <li><a class="link-secondary" href="#">Terms</a></li>
-                </ul>
-            </div>
-        </div>
-    </footer>
-
-
-    <script src="/docs/5.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-/mhDoLbDldZc3qpsJHpLogda//BVZbgYuw6kof4u2FrCedxOtgRZDTHgHUhOCVim"
-        crossorigin="anonymous"></script>
-
-
-
-
+                    // 关闭移动端菜单
+                    mobileMenu.classList.add('hidden');
+                }
+            });
+        });
+    </script>
 </body>
-
-</html>
 
 </html>

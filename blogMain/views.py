@@ -1,3 +1,4 @@
+from re import S
 from django.shortcuts import redirect
 from blogMain.models import BlogPost,Star_table
 from .forms import BlogPostForm
@@ -15,9 +16,25 @@ from django.shortcuts import get_object_or_404
 
 
 def index(request):
+    # 获取所有博客
+    blogs = BlogPost.objects.all()
+    # 初始化收藏的博客ID列表（兼容未登录）
+    stars = []
+    if request.user.is_authenticated:
+        stars = Star_table.objects.filter(
+            user_id=request.user.id
+        ).values_list('blog_id', flat=True)
+    for s in stars:
+        s = int(s)
+    print(stars)
+    # # 为每个博客计算收藏总数
+    # for blog in blogs:
+    #     blog.star_count = Star_table.objects.filter(blog_id=blog.id).count()
     
-    return render(request, 'index.html', {'blogs': BlogPost.objects.all()})
-
+    return render(request, 'index.html', {
+        'blogs': blogs,
+        'stars': stars
+    })
 
 def detail(request, blog_id):
     try:
@@ -75,56 +92,9 @@ def search(request):
 def decoy(request):
     return render (request, "decoy.html")
 
-# @require_POST
-# @login_required()
-# def star(request, article_id):
-#     print(article_id)
-#     try:
-#         blog = BlogPost.objects.get(pk=article_id)
-#     except BlogPost.DoesNotExist:
-#         return JsonResponse({'code': 404, 'message': 'blog not found'})
-#     try:
-#         Star_table.objects.create(user_id=request.user.id, blog_id=article_id)
-#     except Star_table.DoesNotExist:
-#         return JsonResponse({'code': 404, 'message': 'star failed'})
-#     return JsonResponse({'code': 200, 'message': 'star success'})
 
-# @require_POST
-# @login_required()
-# def toggle_star(request):
-
-#     if request.method == "POST" :
-#         article_id = request.POST.get("article_id")
-#         article = get_object_or_404(BlogPost, id=article_id)
-#         user = request.user
-
-#         # 1. 查询/创建收藏记录
-#         record, created = Star_table.objects.get_or_create(
-#             user_id=user.id,
-#             blog_id=article.id,
-#         )
-
-#         # 2. 切换收藏状态 + 确定按钮文字
-#         if Star_table.objects.filter(user_id=user.id, blog_id=article.id).exists():
-#             # 当前是“已收藏” → 改为“未收藏”，按钮文字返回“收藏”
-#             record.delete()
-#             Star_table.objects.filter(user_id=user.id, blog_id=article.id).delete()
-#             new_btn_text = "收藏0"
-#         else:
-#             new_btn_text = "取消收藏"
-#         print(new_btn_text)
-#         # 3. 保存到数据库
-
-#         # 4. 返回结果给前端
-#         return JsonResponse({
-#             "status": "success",
-#             "new_btn_text": new_btn_text  # 核心：返回目标文字
-#         })
-    
-#     return JsonResponse({"status": "error", "msg": "请求方式错误"}, status=400)
-
-@require_POST  # 仅允许POST请求，无需再判断request.method == "POST"
-@login_required(login_url="/login/")  # 未登录跳转到登录页（可选配置）
+@require_POST
+@login_required() 
 def toggle_star(request):
     
     article_id = request.POST.get("article_id")
@@ -149,15 +119,19 @@ def toggle_star(request):
             
             Star_table.objects.filter(user_id=user.id, blog_id=article.id).delete()
             new_btn_text = "收藏" 
+            article.stars -= 1
+            article.save()
         else:
             
             Star_table.objects.create(user_id=user.id, blog_id=article.id)
             new_btn_text = "取消收藏" 
-
+            article.stars += 1
+            article.save()
         # 4. 返回成功结果
         return JsonResponse({
             "status": "success",
-            "new_btn_text": new_btn_text
+            "new_btn_text": new_btn_text,
+            "new_count": f"{article.comments.count()} 条评论 {article.stars}个收藏"
         })
     
     except Exception as e:
@@ -166,3 +140,6 @@ def toggle_star(request):
             "status": "error",
             "msg": f"操作失败：{str(e)}"
         }, status=500)
+    
+def decoy(request):
+    return render(request,'decoy.html')

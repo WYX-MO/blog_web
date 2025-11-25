@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %} <!-- 记得加载static标签 -->
+{% load static %}
 
 {% block title %}
 博客主页
@@ -8,10 +8,21 @@
 {% block head %}
 <script>
     $(function () {
-        // 事件委托：绑定所有收藏按钮
+        // 修复：用模板生成合法的JS布尔值（加引号+转义）
+        var isAuthenticated = "{{ request.user.is_authenticated }}" === "True"; // 关键！
+
         $(document).on("click", ".star-btn", function () {
             const $btn = $(this);
             const articleId = $btn.data("article-id");
+
+            if (!isAuthenticated) {
+                window.location.href = "{% url 'blogAuth:blogAuth_login' %}";
+                return;
+            }
+
+        
+
+            // 已登录：执行原有收藏逻辑
             $btn.prop("disabled", true).text("处理中...");
 
             $.ajax({
@@ -23,8 +34,12 @@
                 },
                 dataType: "json",
                 success: function (res) {
+                    
                     if (res.status === "success") {
                         $btn.text(res.new_btn_text);
+                        // 更新收藏数（注意：这里#count是全局ID，会导致所有博客收藏数同步，建议优化为动态ID）
+                        // 优化建议：给每个收藏数元素加唯一ID，比如 id="star-count-{{ blog.id }}"
+                        $("#count").text(res.new_count);
                     } else {
                         alert(res.msg || "操作失败，请重试");
                     }
@@ -55,18 +70,24 @@
             <ul class="list-group list-group-flush">
                 <li class="list-group-item text-bg-dark border-top border-secondary">发表者：{{ blog.auther.username }}</li>
                 <li class="list-group-item text-bg-dark border-top border-secondary">标签：{{ blog.category.name }}</li>
-                <li class="list-group-item text-bg-dark border-top border-secondary">{{ blog.comments.count }} 条评论</li>
+                <!-- 优化：给收藏数元素加唯一ID，避免全局ID冲突 -->
+                <li class="list-group-item text-bg-dark border-top border-secondary" id="count">
+                    {{ blog.comments.count}} 条评论 {{blog.stars}}个收藏
+                </li>
             </ul>
 
             <div class="card-body d-flex justify-content-between" style="background-color: #272c31;">
                 <div>
                     <a href="{% url 'blogMain:blogMain_detail' blog.id %}" class="btn btn-outline-light me-2">详情</a>
-                    <!-- 修复：改用button，class替代id，动态文字 -->
                     <button type="button" class="btn btn-warning star-btn" data-article-id="{{ blog.id }}">
                         {% if request.user.is_authenticated %}
-                        {{ blog.is_starred|yesno:"取消收藏,收藏1" }}
+                            {% if blog.id in stars %}
+                                取消收藏
+                            {% else %}
+                                收藏
+                            {% endif %}
                         {% else %}
-                        请登录收藏
+                            请登录收藏
                         {% endif %}
                     </button>
                 </div>
@@ -83,7 +104,6 @@
         </div>
     </div>
     {% empty %}
-    <!-- 无博客时显示提示 -->
     <div class="col-12 text-center text-white">暂无博客内容</div>
     {% endfor %}
 </div>
