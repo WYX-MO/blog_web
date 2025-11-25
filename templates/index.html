@@ -8,21 +8,17 @@
 {% block head %}
 <script>
     $(function () {
-        // 修复：用模板生成合法的JS布尔值（加引号+转义）
-        var isAuthenticated = "{{ request.user.is_authenticated }}" === "True"; // 关键！
+        var isAuthenticated = "{{ request.user.is_authenticated }}" === "True";
 
         $(document).on("click", ".star-btn", function () {
             const $btn = $(this);
-            const articleId = $btn.data("article-id");
+            const articleId = $btn.data("article-id"); // 获取当前博客ID
 
             if (!isAuthenticated) {
                 window.location.href = "{% url 'blogAuth:blogAuth_login' %}";
                 return;
             }
 
-        
-
-            // 已登录：执行原有收藏逻辑
             $btn.prop("disabled", true).text("处理中...");
 
             $.ajax({
@@ -34,12 +30,10 @@
                 },
                 dataType: "json",
                 success: function (res) {
-                    
                     if (res.status === "success") {
                         $btn.text(res.new_btn_text);
-                        // 更新收藏数（注意：这里#count是全局ID，会导致所有博客收藏数同步，建议优化为动态ID）
-                        // 优化建议：给每个收藏数元素加唯一ID，比如 id="star-count-{{ blog.id }}"
-                        $("#count").text(res.new_count);
+                        // 关键修复：根据当前博客ID，定位唯一的收藏数元素
+                        $("#star-count-" + articleId).text(res.new_count);
                     } else {
                         alert(res.msg || "操作失败，请重试");
                     }
@@ -71,7 +65,7 @@
                 <li class="list-group-item text-bg-dark border-top border-secondary">发表者：{{ blog.auther.username }}</li>
                 <li class="list-group-item text-bg-dark border-top border-secondary">标签：{{ blog.category.name }}</li>
                 <!-- 优化：给收藏数元素加唯一ID，避免全局ID冲突 -->
-                <li class="list-group-item text-bg-dark border-top border-secondary" id="count">
+                <li class="list-group-item text-bg-dark border-top border-secondary" id="star-count-{{ blog.id }}">
                     {{ blog.comments.count}} 条评论 {{blog.stars}}个收藏
                 </li>
             </ul>

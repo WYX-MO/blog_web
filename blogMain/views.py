@@ -127,6 +127,7 @@ def toggle_star(request):
             new_btn_text = "取消收藏" 
             article.stars += 1
             article.save()
+        print(article.id,article.stars,article.comments.count())
         # 4. 返回成功结果
         return JsonResponse({
             "status": "success",
