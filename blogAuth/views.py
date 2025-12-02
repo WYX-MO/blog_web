@@ -85,10 +85,10 @@ def send_email_vertify(request):
     CaptchaModel.objects.update_or_create(email=email, defaults={'code': captcha})
     try:
         send_mail(
-            '成绩无效提醒:',
-            f'朱俊瑞同学,由于您最近打瓦时间过少,固成绩无效!',
-            "智慧华中大 <1739645729@qq.com>",
-            ['2629075516@qq.com'],
+            '验证码:',
+            f'您的验证码为:{captcha}',
+            "伟大的iizom <1739645729@qq.com>",
+            [email],
             fail_silently=False,
         )
     except Exception as e:

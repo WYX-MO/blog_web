@@ -96,6 +96,7 @@ def search(request):
         stars = Star_table.objects.filter(user_id=request.user.id).values_list('blog_id', flat=True)
         blogs = BlogPost.objects.filter(id__in=stars).all()
     else:
+        stars = []
         blogs = BlogPost.objects.filter(Q(title__icontains=q) | Q(content__icontains=q)).all()
     print(blogs)
     return render(request, 'index.html', {'blogs': blogs, 'stars': stars})
