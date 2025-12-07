@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>石头剪刀布 - 房间 {{ room_id }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- 房间信息 -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-purple-400">房间 ID: {{ room_id }}</h1>
+            <p class="text-gray-400 mt-2">分享此ID邀请好友一起玩！</p>
+        </div>
+
+        <!-- 游戏状态 -->
+        <div id="gameStatus" class="bg-gray-800 rounded-lg p-4 text-center mb-6 text-xl">
+            等待其他玩家加入...
+        </div>
+
+        <!-- 比分板 -->
+        <div class="flex justify-around mb-8">
+            <div class="text-center">
+                <h3 class="text-xl mb-2">玩家1</h3>
+                <div id="player1Score" class="text-4xl font-bold text-green-500">0</div>
+            </div>
+            <div class="text-center">
+                <h3 class="text-xl mb-2">玩家2</h3>
+                <div id="player2Score" class="text-4xl font-bold text-blue-500">0</div>
+            </div>
+        </div>
+
+        <!-- 游戏区域 -->
+        <div id="gameArea" class="hidden">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl">请选择你的出拳：</h2>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4 mb-8">
+                <button onclick="play('rock')"
+                    class="bg-gray-800 hover:bg-gray-700 rounded-lg p-6 text-center transition-colors">
+                    <div class="text-4xl mb-2">✊</div>
+                    <span class="text-lg">石头</span>
+                </button>
+                <button onclick="play('paper')"
+                    class="bg-gray-800 hover:bg-gray-700 rounded-lg p-6 text-center transition-colors">
+                    <div class="text-4xl mb-2">✋</div>
+                    <span class="text-lg">布</span>
+                </button>
+                <button onclick="play('scissors')"
+                    class="bg-gray-800 hover:bg-gray-700 rounded-lg p-6 text-center transition-colors">
+                    <div class="text-4xl mb-2">✌️</div>
+                    <span class="text-lg">剪刀</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 结果展示 -->
+        <div id="resultArea" class="hidden bg-gray-800 rounded-lg p-6 text-center mb-8">
+            <h2 id="resultText" class="text-2xl mb-4"></h2>
+            <div class="flex justify-around">
+                <div>
+                    <h3>玩家1：<span id="player1Choice"></span></h3>
+                </div>
+                <div>
+                    <h3>玩家2：<span id="player2Choice"></span></h3>
+                </div>
+            </div>
+            <button onclick="resetGame()"
+                class="mt-4 bg-purple-600 hover:bg-purple-700 rounded-lg px-6 py-2 transition-colors">
+                再来一局
+            </button>
+        </div>
+
+        <!-- 准备按钮 -->
+        <div id="readyButton" class="text-center">
+            <button onclick="setReady()"
+                class="bg-green-600 hover:bg-green-700 rounded-lg px-8 py-3 text-xl font-bold transition-colors">
+                准备开始
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 替换原有 WebSocket 相关代码
+        const playerId = 'player_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+        const roomId = '{{ room_id }}';
+        let socket = null;
+        let isReady = false;
+        let reconnectAttempts = 0;
+        const MAX_RECONNECT = 5; // 最大重连次数
+
+        // 初始化 WebSocket 连接
+        function initWebSocket() {
+            // 关闭已有连接（避免重复连接）
+            if (socket) {
+                socket.close();
+            }
+
+            // 创建新连接
+            try {
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                socket = new WebSocket(`${protocol}//${window.location.host}/ws/game/${roomId}/`);
+
+                // 连接成功
+                socket.onopen = function () {
+                    console.log("WebSocket 连接成功！");
+                    reconnectAttempts = 0; // 重置重连次数
+                    document.getElementById('gameStatus').textContent = "已连接，等待其他玩家加入...";
+                };
+
+                // 接收消息
+                socket.onmessage = function (e) {
+                    const data = JSON.parse(e.data);
+                    if (data.type === 'status') {
+                        handleStatus(data.data);
+                    } else if (data.type === 'result') {
+                        handleResult(data.data);
+                    }
+                };
+
+                // 连接关闭
+                socket.onclose = function (e) {
+                    console.log(`WebSocket 关闭 (状态码: ${e.code})`, e.reason);
+                    document.getElementById('gameStatus').textContent = "连接已断开，正在重连...";
+
+                    // 自动重连（最多5次）
+                    if (reconnectAttempts < MAX_RECONNECT) {
+                        reconnectAttempts++;
+                        setTimeout(initWebSocket, 2000 * reconnectAttempts); // 指数退避重连
+                    } else {
+                        document.getElementById('gameStatus').textContent = "连接失败，请刷新页面！";
+                    }
+                };
+
+                // 连接错误
+                socket.onerror = function (error) {
+                    console.error("WebSocket 错误：", error);
+                    socket.close();
+                };
+            } catch (e) {
+                console.error("创建 WebSocket 失败：", e);
+            }
+        }
+
+        // 页面加载时初始化连接
+        window.onload = function () {
+            initWebSocket();
+        };
+
+        // 发送消息前检查连接状态
+        function sendSocketMessage(message) {
+            if (!socket) {
+                alert("WebSocket 未初始化，请刷新页面！");
+                return false;
+            }
+
+            // 检查连接状态（1 = OPEN，其他状态都不能发送）
+            if (socket.readyState !== WebSocket.OPEN) {
+                console.error("WebSocket 状态异常：", socket.readyState);
+                alert("连接已断开，无法发送消息！");
+                return false;
+            }
+
+            try {
+                socket.send(JSON.stringify(message));
+                return true;
+            } catch (e) {
+                console.error("发送消息失败：", e);
+                return false;
+            }
+        }
+
+        // 修正准备函数
+        function setReady() {
+            console.log("准备按钮被点击！");
+
+            if (isReady) {
+                alert("你已准备过，无需重复点击！");
+                return;
+            }
+
+            // 发送准备消息（带状态校验）
+            const success = sendSocketMessage({
+                'action': 'ready',
+                'player_id': playerId
+            });
+
+            if (success) {
+                console.log("准备消息发送成功");
+                // 先标记为已准备（避免重复点击）
+                isReady = true;
+                document.getElementById('readyButton').classList.add('hidden');
+            }
+        }
+
+        // 修正出拳函数
+        function play(choice) {
+            const success = sendSocketMessage({
+                'action': 'play',
+                'player_id': playerId,
+                'choice': choice
+            });
+
+            if (success) {
+                document.getElementById('gameStatus').textContent = `你已选择${getChinese(choice)}，等待对手...`;
+            }
+        }
+
+        // 其他函数（handleStatus/handleResult/resetGame/getEmoji/getChinese）保持不变
+        function handleStatus(statusData) {
+            console.log("收到状态消息：", statusData);
+            const statusEl = document.getElementById('gameStatus');
+
+            if (statusData.status === 'connected') {
+                statusEl.textContent = statusData.message;
+            } else if (statusData.status === 'ready') {
+                statusEl.textContent = `玩家${statusData.player_id.slice(-6)}已准备！(${statusData.ready_count}/2)`;
+
+                // 其他玩家准备时，不修改自己的ready状态
+                if (statusData.player_id !== playerId) {
+                    isReady = false; // 防止状态不同步
+                }
+            } else if (statusData.status === 'start') {
+                statusEl.textContent = '游戏开始！请选择你的出拳';
+                document.getElementById('gameArea').classList.remove('hidden');
+                document.getElementById('readyButton').classList.add('hidden');
+            } else if (statusData.status === 'play') {
+                statusEl.textContent = `玩家${statusData.player_id.slice(-6)}已出拳，等待另一方...`;
+            }
+        }
+
+        function handleResult(resultData) {
+            document.getElementById('gameArea').classList.add('hidden');
+            document.getElementById('resultArea').classList.remove('hidden');
+
+            // 更新比分（适配动态玩家ID）
+            document.getElementById('player1Score').textContent = resultData.scores[resultData.player1_id] || 0;
+            document.getElementById('player2Score').textContent = resultData.scores[resultData.player2_id] || 0;
+
+            // 显示选择
+            document.getElementById('player1Choice').textContent = getEmoji(resultData.player1_choice);
+            document.getElementById('player2Choice').textContent = getEmoji(resultData.player2_choice);
+
+            // 显示结果
+            let resultText = '';
+            if (resultData.winner_id === 'draw') {
+                resultText = '平局！';
+            } else if (resultData.winner_id === playerId) {
+                resultText = '你获胜了！';
+            } else {
+                resultText = '你输了！';
+            }
+            document.getElementById('resultText').textContent = resultText;
+        }
+
+        function resetGame() {
+            document.getElementById('resultArea').classList.add('hidden');
+            document.getElementById('readyButton').classList.remove('hidden');
+            document.getElementById('gameStatus').textContent = '准备下一局，请点击准备按钮';
+            isReady = false;
+        }
+
+        function getEmoji(choice) {
+            const map = {
+                'rock': '✊ 石头',
+                'paper': '✋ 布',
+                'scissors': '✌️ 剪刀'
+            };
+            return map[choice] || choice;
+        }
+
+        function getChinese(choice) {
+            const map = {
+                'rock': '石头',
+                'paper': '布',
+                'scissors': '剪刀'
+            };
+            return map[choice] || choice;
+        }
+
+        // 页面关闭时优雅关闭连接
+        window.onbeforeunload = function () {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.close(1000, '页面关闭');
+            }
+        };
+    </script>
+</body>
+
+</html>

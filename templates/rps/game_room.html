@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>石头剪刀布 - 房间 {{ room_name }}</title>
+    <style>
+        body {
+            font-family: Arial;
+            max-width: 800px;
+            margin: 30px auto;
+        }
+
+        .room-info {
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .choices {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .choice-btn {
+            padding: 20px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            background: #2196F3;
+            color: white;
+        }
+
+        .choice-btn:hover {
+            background: #0b7dda;
+        }
+
+        .choice-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .log {
+            height: 200px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            overflow-y: auto;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .result {
+            font-size: 20px;
+            color: #e91e63;
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .btn-group {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .reset-btn {
+            padding: 10px 20px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .reset-btn:hover {
+            background: #d32f2f;
+        }
+    </style>
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+</head>
+
+<body>
+    <h1>房间：{{ room_name }}</h1>
+    <div class="room-info">
+        <p>你的ID：<span id="playerId">{{ player_id }}</span></p>
+        <p>当前玩家数：<span id="playerCount">0</span> / 2</p>
+        <p id="roomMsg">等待其他玩家加入...</p>
+    </div>
+
+    <div class="choices">
+        <button class="choice-btn" data-choice="rock">石头</button>
+        <button class="choice-btn" data-choice="paper">布</button>
+        <button class="choice-btn" data-choice="scissors">剪刀</button>
+    </div>
+
+    <div class="result" id="gameResult"></div>
+    <div class="log" id="gameLog"></div>
+
+    <div class="btn-group">
+        <button class="reset-btn" onclick="clearPlayerId()">重置我的玩家ID</button>
+    </div>
+
+    <script>
+        // 全局变量
+        const roomName = "{{ room_name }}";
+        let playerId = "{{ player_id }}"; // 从Cookie读取的ID
+        const pusherKey = "{{ pusher_key }}";
+        const pusherCluster = "{{ pusher_cluster }}";
+        let hasChoiced = false;
+
+        // 初始化 Pusher
+        const pusher = new Pusher(pusherKey, {
+            cluster: pusherCluster,
+            encrypted: true
+        });
+
+        // 订阅房间频道
+        const channel = pusher.subscribe(`room-${roomName}`);
+
+        // 辅助函数：添加日志
+        function addLog(msg) {
+            const time = new Date().toLocaleTimeString();
+            const logEl = document.getElementById('gameLog');
+            logEl.innerHTML += `[${time}] ${msg}<br>`;
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        // 辅助函数：翻译出拳
+        function translateChoice(choice) {
+            const map = { 'rock': '石头', 'paper': '布', 'scissors': '剪刀' };
+            return map[choice] || choice;
+        }
+
+        // 页面加载：加入房间
+        window.onload = () => {
+            fetch('/join-room/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ room_name: roomName, player_id: playerId })
+            }).then(res => res.json()).then(data => {
+                if (data.status === 'success') {
+                    document.getElementById('playerCount').textContent = data.count;
+                    addLog(data.msg);
+                } else {
+                    alert(data.msg);
+                }
+            });
+
+            // 心跳包：每30秒更新活跃时间，防止被清理
+            setInterval(() => {
+                fetch('/join-room/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ room_name: roomName, player_id: playerId })
+                });
+            }, 30000);
+        };
+
+        // 监听玩家加入
+        channel.bind('player-join', data => {
+            document.getElementById('playerCount').textContent = data.count;
+            document.getElementById('roomMsg').textContent = data.msg;
+            addLog(data.msg);
+        });
+
+        // 监听玩家离开（超时）
+        channel.bind('player-leave', data => {
+            document.getElementById('playerCount').textContent = data.count;
+            addLog(data.msg);
+        });
+
+        // 监听玩家出拳
+        channel.bind('player-choice', data => {
+            addLog(data.msg);
+            if (data.player_id !== playerId) {
+                document.getElementById('gameResult').textContent = '对方已出拳，等待判定...';
+            }
+        });
+
+        // 监听游戏结果
+        channel.bind('game-result', data => {
+            document.getElementById('gameResult').textContent = data.result;
+            addLog(`游戏结果：${data.result}`);
+            addLog(`玩家${data.p1_id}：${data.p1_choice} | 玩家${data.p2_id}：${data.p2_choice}`);
+            // 重置出拳状态
+            hasChoiced = false;
+            document.querySelectorAll('.choice-btn').forEach(btn => btn.disabled = false);
+        });
+
+        // 出拳按钮点击
+        document.querySelectorAll('.choice-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const choice = btn.dataset.choice;
+                const playerCount = parseInt(document.getElementById('playerCount').textContent);
+
+                if (playerCount < 2) {
+                    alert('房间人数不足！');
+                    return;
+                }
+                if (hasChoiced) {
+                    alert('你已出拳！');
+                    return;
+                }
+
+                hasChoiced = true;
+                document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+
+                // 发送出拳请求
+                fetch('/make-choice/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        room_name: roomName,
+                        player_id: playerId,
+                        choice: choice
+                    })
+                }).then(res => res.json()).then(data => {
+                    if (data.status === 'success') {
+                        addLog(`你出拳：${translateChoice(choice)}`);
+                        document.getElementById('gameResult').textContent = '等待对方出拳...';
+                    } else {
+                        alert(data.msg);
+                        hasChoiced = false;
+                        document.querySelectorAll('.choice-btn').forEach(b => b.disabled = false);
+                    }
+                });
+            });
+        });
+
+        // 手动清除玩家ID
+        function clearPlayerId() {
+            if (confirm('确定要重置ID吗？重置后将以新身份加入房间！')) {
+                fetch('/clear-player-id/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `room_name=${roomName}`
+                }).then(res => res.json()).then(data => {
+                    alert(data.msg);
+                    location.reload(); // 刷新生成新ID
+                });
+            }
+        }
+
+        // 页面关闭：取消订阅
+        window.onbeforeunload = () => pusher.unsubscribe(`room-${roomName}`);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,139 @@
+{%extends 'base.html' %}
+{% load static %}
+{% block title %}
+博客详情
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'highlight/styles/github-dark.css' %}">
+<script src="{% static 'highlight/highlight.min.js' %}"></script>
+<script>
+    $(function () {
+        var isAuthenticated = "{{ request.user.is_authenticated }}" === "True";
+
+        $(document).on("click", ".star-btn", function () {
+            const $btn = $(this);
+            const articleId = $btn.data("article-id"); // 获取当前博客ID
+
+            if (!isAuthenticated) {
+                window.location.href = "{% url 'blogAuth:blogAuth_login' %}";
+                return;
+            }
+
+            $btn.prop("disabled", true).text("处理中...");
+
+            $.ajax({
+                url: "{% url 'blogMain:toggle_star' %}",
+                type: "POST",
+                data: {
+                    "article_id": articleId,
+                    "csrfmiddlewaretoken": "{{ csrf_token }}"
+                },
+                dataType: "json",
+                success: function (res) {
+                    if (res.status === "success") {
+                        $btn.text(res.new_btn_text);
+                        // 关键修复：根据当前博客ID，定位唯一的收藏数元素
+                        $("#star-count-" + articleId).text(res.new_count);
+                    } else {
+                        alert(res.msg || "操作失败，请重试");
+                    }
+                },
+                error: function () {
+                    alert("网络错误，请检查连接");
+                },
+                complete: function () {
+                    $btn.prop("disabled", false);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
+
+{% block main %}
+<!-- 核心：flex + space-between 实现左右分布，width:100% 占满父容器宽度 -->
+<div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+    <h1 style="margin: 0;">博客详情页</h1> <!-- 清除h1默认margin避免换行 -->
+    <button type="button" class="btn btn-warning star-btn" data-article-id="{{ blog.id }}">
+        {% if request.user.is_authenticated %}
+            {% if blog.id in stars %}
+            取消收藏
+            {% else %}
+            收藏
+            {% endif %}
+        {% else %}
+            请登录收藏
+        {% endif %}
+    </button>
+</div>
+
+
+<hr>
+<div class="mt-2">
+    <img src="{% static 'image/logo_img.png' %}" alt="Author Avatar" width="30" height="30"
+        class="d-inline-block align-text-top rounded-circle">
+    <span class="ms-2 text-white">{{ blog.auther }}</span>
+    <span class="ms-2 text-white">于</span>
+    <span class="ms-2 text-white">{{ blog.publicTime }}</span>发布
+</div>
+<hr>
+<div class="py-2">
+    <h3 class="text-white">{{ blog.title }}</h3>
+</div>
+<div class="py-2">
+    <p class="text-white">{{ blog.content | safe }}</p>
+</div>
+
+
+
+<!-- <div class="card text-bg-dark" style="width: 100%; border: 4px solid #756b68; border-radius: 0.5rem;">
+            <div class="card-body" style="background-color: #272c31;">
+                <h3 class="card-title">博客标题</h3>
+                <p class="card-text">这里是博客的详细内容。可以包含多段文字、图片等丰富内容。</p>
+            </div>  
+            <div class="card-footer" style="background-color: #272c31;">
+                <p class="card-text text-end">发布时间：2023-10-10</p>
+            </div>
+        </div> -->
+
+<hr>
+<div class="mt-2">
+    <h3 class="text-white" id="star-count-{{ blog.id }}">{{ blog.comments.count }} 条评论 {{ blog.stars }} 个收藏</h3>
+    <form action="{% url 'blogMain:blogMain_comment' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="blog_id" value="{{ blog.id }}">
+        <div class="input-group mb-3">
+            <span class="input-group-text text-white bg-dark" id="inputGroup-sizing-default">To Author Name</span>
+            <input type="text" class="form-control text-white bg-dark" aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-default" name="content">
+        </div>
+        <div class="text-end">
+            <button type="submit" class="btn btn-warning">submit</button>
+        </div>
+
+    </form>
+</div>
+
+<div class="mt-2">
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item text-bg-dark mb-2">
+            {% for comment in blog.comments.all %}
+            <div class="d-flex align-items-center mb-2">
+                <img src="{% static 'image/logo_img.png' %}" alt="" width="30" height="30"
+                    class="d-inline-block align-text-top rounded-circle">
+                <span class="ms-2 text-white">{{ comment.auther }}</span>
+                <span class="ms-2 text-white">于</span>
+                <span class="ms-2 text-white">{{ comment.publicTime }}</span>评论
+            </div>
+            <p class="text-white">{{ comment.content }}</p>
+            <hr>
+            {% endfor %}
+
+        </li>
+    </ul>
+</div>
+<script>
+    hljs.highlightAll();
+</script>
+{% endblock %}

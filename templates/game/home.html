@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>石头剪刀布 - 首页</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center">
+    <div class="bg-gray-800 p-8 rounded-xl shadow-2xl w-full max-w-md">
+        <h1 class="text-3xl font-bold text-center mb-8 text-purple-400">石头剪刀布大战</h1>
+
+        <div class="mb-6">
+            <label class="block mb-2 text-gray-300">房间ID（可自定义）</label>
+            <input type="text" id="roomId" value="{{ room_id }}"
+                class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white">
+        </div>
+
+        <button onclick="joinGame()"
+            class="w-full bg-purple-600 hover:bg-purple-700 rounded-lg p-3 font-bold transition-colors">
+            进入游戏房间
+        </button>
+    </div>
+
+    <script>
+        function joinGame() {
+            const roomId = document.getElementById('roomId').value.trim();
+            if (roomId) {
+                window.location.href = `/game/${roomId}/`;
+            } else {
+                alert('请输入房间ID！');
+            }
+        }
+    </script>
+</body>
+
+</html>
