@@ -14,4 +14,5 @@ urlpatterns = [
    path('toggle_star/', views.toggle_star, name='toggle_star'),
    path('download/<str:filename>/', views.download, name='download'),
    path('download_index/', views.download_index, name='download_index'),
+   path('hello/', views.hello, name='hello'),
 ]

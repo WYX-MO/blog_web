@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>森林夜话 | 卡通星球</title>
+    <!-- 引入Tailwind CSS CDN（生产环境建议本地部署） -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome图标库（图标可替换，参考https://fontawesome.com/v4/icons/） -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 引入圆润卡通字体（可替换为其他字体，如幼圆、微软雅黑等） -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- 自定义Tailwind配置（颜色、动画、圆角等核心样式配置区） -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // 主题色配置区 - 可修改为自己的品牌色
+                        primary: '#2D6A4F',    // 森林绿主色
+                        secondary: '#1B4332',  // 深林绿辅助色
+                        accent: '#F9C74F',     // 萤火黄点缀色
+                        star: '#90E0EF',       // 星空蓝
+                        neutral: {
+                            100: '#F8F9FA',    // 浅灰
+                            200: '#E9ECEF',    // 中浅灰
+                            800: '#1A1A2E',    // 深灰
+                            900: '#0F3460',    // 最深灰/深蓝
+                        },
+                    },
+                    fontFamily: {
+                        // 字体配置区 - 可替换为其他圆润字体
+                        'round': ['ZCOOL KuaiLe', 'cursive'], // 最圆润的卡通字体
+                        'round-secondary': ['Ma Shan Zheng', 'cursive'], // 次圆润字体
+                        'sans': ['Noto Sans SC', 'sans-serif'], // 基础无衬线字体
+                    },
+                    animation: {
+                        // 动画配置区 - 可调整动画时长、效果
+                        'float': 'float 6s ease-in-out infinite',     // 漂浮动画
+                        'twinkle': 'twinkle 3s ease-in-out infinite', // 闪烁动画
+                        'firefly': 'firefly 8s ease-in-out infinite', // 萤火虫动画
+                        'pulse-soft': 'pulseSoft 4s ease-in-out infinite', // 柔和脉冲
+                        'fade-in': 'fadeIn 1s ease-out forwards',     // 淡入
+                        'slide-up': 'slideUp 0.8s ease-out forwards', // 上滑
+                    },
+                    keyframes: {
+                        // 动画关键帧定义 - 可调整动画细节
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-10px) rotate(1deg)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: 0 },
+                            '100%': { opacity: 1 },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(30px)', opacity: 0 },
+                            '100%': { transform: 'translateY(0)', opacity: 1 },
+                        },
+                        twinkle: {
+                            '0%, 100%': { opacity: 0.5, transform: 'scale(1)' },
+                            '50%': { opacity: 1, transform: 'scale(1.1)' },
+                        },
+                        firefly: {
+                            '0%': { transform: 'translate(0, 0)', opacity: 0 },
+                            '25%': { transform: 'translate(15px, -10px)', opacity: 1 },
+                            '50%': { transform: 'translate(30px, 5px)', opacity: 0.8 },
+                            '75%': { transform: 'translate(10px, 15px)', opacity: 1 },
+                            '100%': { transform: 'translate(0, 0)', opacity: 0 },
+                        },
+                        pulseSoft: {
+                            '0%, 100%': { transform: 'scale(1)', boxshadow: '0 0 15px rgba(249, 199, 79, 0.2)' },
+                            '50%': { transform: 'scale(1.03)', boxshadow: '0 0 25px rgba(249, 199, 79, 0.4)' },
+                        },
+                    },
+                    borderRadius: {
+                        // 圆角配置区 - 可调整圆角大小
+                        'cartoon': '30px',    // 基础卡通圆角
+                        'cartoon-lg': '40px', // 大卡通圆角
+                        'btn-full': '9999px', // 全圆角（按钮用）
+                    }
+                },
+            }
+        }
+    </script>
+
+    <!-- 自定义工具类（可扩展自己的样式类） -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .cartoon-shadow {
+                box-shadow: 0 8px 0 rgba(15, 52, 96, 0.12), 0 4px 10px rgba(15, 52, 96, 0.08);
+            }
+            .bg-blur {
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+            }
+            .text-cartoon {
+                text-shadow: 1px 1px 0 rgba(15, 52, 96, 0.1);
+            }
+            .cartoon-border {
+                border: 3px solid #0F3460;
+                border-radius: 30px;
+                box-shadow: 4px 4px 0 #0F3460;
+            }
+            .star-glow {
+                box-shadow: 0 0 12px rgba(144, 224, 239, 0.6), 0 0 20px rgba(144, 224, 239, 0.3);
+            }
+            .firefly-glow {
+                box-shadow: 0 0 10px rgba(249, 199, 79, 0.8), 0 0 20px rgba(249, 199, 79, 0.5);
+            }
+            .btn-round {
+                border-radius: 9999px !important;
+            }
+            .btn-round-lg {
+                border-radius: 40px !important;
+            }
+        }
+    </style>
+
+    <style>
+        /* 基础全局样式 */
+        body {
+            background: linear-gradient(180deg, #0F3460 0%, #1A1A2E 50%, #1B4332 100%);
+            background-attachment: fixed;
+            background-position: center;
+            overflow-x: hidden;
+            position: relative;
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.6;
+        }
+
+        /* 星空背景（可修改星星大小、颜色、密度） */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80%;
+            background-image:
+                radial-gradient(2px 2px at 20px 30px, #90E0EF, rgba(0, 0, 0, 0)),
+                radial-gradient(2px 2px at 40px 70px, #FFFFFF, rgba(0, 0, 0, 0)),
+                radial-gradient(1px 1px at 90px 40px, #FFFFFF, rgba(0, 0, 0, 0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            opacity: 0.6;
+            z-index: -2;
+        }
+
+        /* 森林剪影背景 - 【替换图片位置1】 */
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 75%;
+            background-image: url("../../static/image/bk.png");
+            /* 替换为自己的森林剪影图片URL */
+            background-size: cover;
+            background-position: bottom;
+            opacity: 0.3;
+            z-index: -1;
+            mask-image: linear-gradient(to top, black 70%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to top, black 70%, transparent 100%);
+        }
+
+        /* 萤火虫样式（可调整大小、颜色） */
+        .firefly {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #F9C74F;
+            border-radius: 50%;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        /* 文章卡片悬停效果（可调整悬停位移、阴影） */
+        .post-card {
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .post-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 0 rgba(15, 52, 96, 0.15), 0 8px 15px rgba(15, 52, 96, 0.1);
+        }
+
+        /* 森林风格分割线（可修改颜色、高度、宽度） */
+        .cartoon-divider {
+            height: 6px;
+            background: linear-gradient(90deg, transparent, #2D6A4F, #F9C74F, #90E0EF, transparent);
+            border-radius: 3px;
+            width: 80%;
+            margin: 2rem auto;
+        }
+
+        /* 按钮样式（可调整悬停效果） */
+        .cartoon-btn {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border-radius: 9999px;
+        }
+
+        .cartoon-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 0 rgba(15, 52, 96, 0.1);
+        }
+
+        /* 图片滤镜（可调整滤镜参数） */
+        .forest-filter {
+            filter: sepia(15%) hue-rotate(100deg) brightness(0.95) contrast(1.05);
+            transition: filter 0.4s ease;
+        }
+
+        .forest-filter:hover {
+            filter: sepia(10%) hue-rotate(100deg) brightness(1) contrast(1.1);
+        }
+
+        /* 输入框样式（可调整边框、阴影） */
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            border-radius: 9999px !important;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        textarea:focus {
+            transform: translateY(-1px);
+            box-shadow: 0 0 15px rgba(249, 199, 79, 0.3);
+        }
+
+        /* 分类标签样式 */
+        .category-tag {
+            border-radius: 9999px !important;
+        }
+
+        /* 导航下划线动画 */
+        .nav-underline {
+            transition: all 0.4s ease;
+        }
+    </style>
+</head>
+
+<body class="text-neutral-100 min-h-screen">
+    <!-- 萤火虫装饰元素（可调整数量、位置） -->
+    <div class="firefly animate-firefly" style="top: 25%; left: 15%; animation-delay: 0s;"></div>
+    <div class="firefly animate-firefly" style="top: 45%; left: 85%; animation-delay: 2s;"></div>
+    <div class="firefly animate-firefly" style="top: 65%; left: 35%; animation-delay: 4s;"></div>
+
+    <!-- 导航栏 -->
+    <header class="sticky top-0 z-50 bg-neutral-900/70 bg-blur cartoon-shadow">
+        <div class="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
+            <!-- Logo区域 -->
+            <div class="flex items-center mb-4 md:mb-0 animate-float pulse-soft">
+                <div
+                    class="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center cartoon-border mr-4 star-glow">
+                    <i class="fa fa-tree text-primary text-4xl"></i> <!-- 可替换Logo图标 -->
+                </div>
+                <h1 class="text-4xl font-round font-bold text-cartoon text-accent">森林夜话</h1> <!-- 可修改网站名称 -->
+            </div>
+
+            <!-- 导航菜单（可修改菜单项、链接） -->
+            <nav class="flex flex-wrap justify-center gap-6 md:gap-8">
+                <a href="#home" class="font-round text-xl hover:text-accent transition-colors relative group">
+                    首页
+                    <span
+                        class="absolute bottom-0 left-0 w-0 h-2 bg-accent rounded-full nav-underline group-hover:w-full"></span>
+                </a>
+                <a href="#posts" class="font-round text-xl hover:text-accent transition-colors relative group">
+                    夜话
+                    <span
+                        class="absolute bottom-0 left-0 w-0 h-2 bg-accent rounded-full nav-underline group-hover:w-full"></span>
+                </a>
+                <a href="#categories" class="font-round text-xl hover:text-accent transition-colors relative group">
+                    分类
+                    <span
+                        class="absolute bottom-0 left-0 w-0 h-2 bg-accent rounded-full nav-underline group-hover:w-full"></span>
+                </a>
+                <a href="#about" class="font-round text-xl hover:text-accent transition-colors relative group">
+                    关于我
+                    <span
+                        class="absolute bottom-0 left-0 w-0 h-2 bg-accent rounded-full nav-underline group-hover:w-full"></span>
+                </a>
+                <a href="#contact" class="font-round text-xl hover:text-accent transition-colors relative group">
+                    树洞
+                    <span
+                        class="absolute bottom-0 left-0 w-0 h-2 bg-accent rounded-full nav-underline group-hover:w-full"></span>
+                </a>
+            </nav>
+
+            <!-- 搜索框 - 【后端对接点1：搜索功能】 -->
+            <div class="mt-4 md:mt-0 relative">
+                <input type="text" placeholder="搜索森林里的故事..."
+                    class="px-5 py-3 pl-12 bg-neutral-800/80 rounded-cartoon border-2 border-accent/30 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent text-lg text-neutral-100 btn-round"
+                    id="search-input"> <!-- 后端对接：绑定搜索接口，监听回车/点击事件 -->
+                <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-accent/80 text-xl"
+                    id="search-btn"></i> <!-- 搜索按钮 -->
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-10">
+        <!-- 首页横幅 -->
+        <section id="home" class="relative mb-20 animate-fade-in">
+            <div class="bg-neutral-900/60 bg-blur rounded-cartoon-lg cartoon-shadow p-8 md:p-16">
+                <div class="max-w-4xl mx-auto text-center">
+                    <h2
+                        class="text-[clamp(2.5rem,6vw,4.5rem)] font-round font-bold text-accent mb-6 text-cartoon animate-slide-up">
+                        森林里的卡通夜话
+                    </h2>
+                    <p class="text-xl md:text-2xl mb-10 animate-slide-up text-neutral-200">
+                        在静谧的森林夜晚，用卡通的笔触记录星光、萤火和林间趣事～
+                        每一个故事，都是森林送给你的温柔礼物 ✨
+                    </p>
+                    <div class="cartoon-divider animate-slide-up"></div>
+                    <div class="mt-10 flex flex-wrap justify-center gap-6 animate-slide-up">
+                        <a href="#posts"
+                            class="px-9 py-4 bg-primary text-white font-round rounded-cartoon cartoon-btn hover:bg-primary/90 text-xl firefly-glow btn-round">
+                            探索夜话 <i class="fa fa-firefly ml-2"></i>
+                        </a>
+                        <a href="#about"
+                            class="px-9 py-4 bg-neutral-800/80 border-2 border-accent rounded-cartoon cartoon-btn hover:bg-accent/10 text-xl btn-round">
+                            认识守林人 <i class="fa fa-user-o ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 装饰图片 - 【替换图片位置2】 -->
+            <div class="absolute -top-12 -left-12 hidden md:block animate-float">
+                <img src="https://picsum.photos/id/118/120/120" alt="森林卡通装饰"
+                    class="w-32 h-32 opacity-85 rounded-full forest-filter"> <!-- 替换为自己的装饰图片 -->
+            </div>
+        </section>
+
+        <!-- 文章列表 - 【后端对接点2：文章列表数据】 -->
+        <section id="posts" class="mb-20">
+            <div class="text-center mb-16">
+                <h3
+                    class="text-[clamp(2rem,5vw,3.5rem)] font-round font-bold text-accent mb-6 text-cartoon animate-twinkle">
+                    林间卡通日志
+                </h3>
+                <div class="cartoon-divider"></div>
+            </div>
+
+            <!-- 文章卡片列表（后端对接：循环渲染文章数据） -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="post-list-container">
+                <!-- 文章卡片1 - 【替换图片位置3】 -->
+                <article
+                    class="post-card bg-neutral-800/70 bg-blur rounded-cartoon cartoon-shadow overflow-hidden animate-slide-up">
+                    <div class="relative h-56 overflow-hidden rounded-t-cartoon">
+                        <img src="https://picsum.photos/id/1082/600/400" alt="文章封面"
+                            class="w-full h-full object-cover forest-filter"> <!-- 替换为文章封面图 -->
+                        <div
+                            class="absolute top-4 left-4 bg-accent/90 text-neutral-900 text-lg px-4 py-2 rounded-cartoon font-round category-tag">
+                            森林手绘 <!-- 后端对接：文章分类 -->
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h4 class="text-2xl font-round font-bold mb-4 hover:text-accent transition-colors">
+                            <a href="#">零基础森林精灵绘制：6步画出萌系小鹿</a> <!-- 后端对接：文章标题 -->
+                        </h4>
+                        <p class="text-neutral-200/90 mb-5 line-clamp-3 text-lg">
+                            想画出森林里的可爱精灵？这篇教程教你6个简单步骤，从圆润的轮廓到灵动的鹿角，
+                            零基础也能轻松画出超萌的森林小鹿，手残党也能秒会！ <!-- 后端对接：文章摘要 -->
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <!-- 作者头像 - 【替换图片位置4】 -->
+                                <img src="https://picsum.photos/id/1005/60/60" alt="作者头像"
+                                    class="w-10 h-10 rounded-full mr-3 border-2 border-accent forest-filter">
+                                <!-- 替换为作者头像 -->
+                                <span class="text-lg font-medium text-neutral-200">森林守夜人</span> <!-- 后端对接：作者名称 -->
+                            </div>
+                            <span class="text-neutral-200/70 font-medium">2025-12-08</span> <!-- 后端对接：发布时间 -->
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 文章卡片2 -->
+                <article
+                    class="post-card bg-neutral-800/70 bg-blur rounded-cartoon cartoon-shadow overflow-hidden animate-slide-up"
+                    style="animation-delay: 0.2s">
+                    <div class="relative h-56 overflow-hidden rounded-t-cartoon">
+                        <img src="https://picsum.photos/id/109/600/400" alt="文章封面"
+                            class="w-full h-full object-cover forest-filter"> <!-- 替换为文章封面图 -->
+                        <div
+                            class="absolute top-4 left-4 bg-primary/90 text-white text-lg px-4 py-2 rounded-cartoon font-round category-tag">
+                            动漫杂谈
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h4 class="text-2xl font-round font-bold mb-4 hover:text-accent transition-colors">
+                            <a href="#">那些治愈系的森林主题动画，温暖了整个童年</a>
+                        </h4>
+                        <p class="text-neutral-200/90 mb-5 line-clamp-3 text-lg">
+                            盘点8部治愈系森林主题动画，从《龙猫》到《鹿铃》，每一部都像森林的晚风，
+                            治愈了成长中的所有不开心，快来看看有没有你的童年回忆～
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <img src="https://picsum.photos/id/1006/60/60" alt="作者头像"
+                                    class="w-10 h-10 rounded-full mr-3 border-2 border-accent forest-filter">
+                                <span class="text-lg font-medium text-neutral-200">森林守夜人</span>
+                            </div>
+                            <span class="text-neutral-200/70 font-medium">2025-12-03</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 文章卡片3 -->
+                <article
+                    class="post-card bg-neutral-800/70 bg-blur rounded-cartoon cartoon-shadow overflow-hidden animate-slide-up"
+                    style="animation-delay: 0.4s">
+                    <div class="relative h-56 overflow-hidden rounded-t-cartoon">
+                        <img src="https://picsum.photos/id/118/600/400" alt="文章封面"
+                            class="w-full h-full object-cover forest-filter"> <!-- 替换为文章封面图 -->
+                        <div
+                            class="absolute top-4 left-4 bg-accent/90 text-neutral-900 text-lg px-4 py-2 rounded-cartoon font-round category-tag">
+                            创作灵感
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h4 class="text-2xl font-round font-bold mb-4 hover:text-accent transition-colors">
+                            <a href="#">12个森林系卡通配色技巧，让画作充满自然气息</a>
+                        </h4>
+                        <p class="text-neutral-200/90 mb-5 line-clamp-3 text-lg">
+                            配色是森林卡通的灵魂！分享12个实用的森林系配色技巧，从苔藓绿到星空蓝，
+                            让你的卡通作品充满自然气息，新手也能轻松掌握～
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <img src="https://picsum.photos/id/1005/60/60" alt="作者头像"
+                                    class="w-10 h-10 rounded-full mr-3 border-2 border-accent forest-filter">
+                                <span class="text-lg font-medium text-neutral-200">森林守夜人</span>
+                            </div>
+                            <span class="text-neutral-200/70 font-medium">2025-11-28</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 文章卡片4 -->
+                <article
+                    class="post-card bg-neutral-800/70 bg-blur rounded-cartoon cartoon-shadow overflow-hidden animate-slide-up"
+                    style="animation-delay: 0.6s">
+                    <div class="relative h-56 overflow-hidden rounded-t-cartoon">
+                        <img src="https://picsum.photos/id/122/600/400" alt="文章封面"
+                            class="w-full h-full object-cover forest-filter"> <!-- 替换为文章封面图 -->
+                        <div
+                            class="absolute top-4 left-4 bg-primary/90 text-white text-lg px-4 py-2 rounded-cartoon font-round category-tag">
+                            周边分享
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h4 class="text-2xl font-round font-bold mb-4 hover:text-accent transition-colors">
+                            <a href="#">我的森林卡通周边收藏：这些宝藏值得拥有</a>
+                        </h4>
+                        <p class="text-neutral-200/90 mb-5 line-clamp-3 text-lg">
+                            作为资深森林卡通爱好者，收藏了超多可爱的森林主题周边！从木质手办到苔藓微景观，
+                            分享我的私藏清单，每一款都治愈到犯规～
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <img src="https://picsum.photos/id/1006/60/60" alt="作者头像"
+                                    class="w-10 h-10 rounded-full mr-3 border-2 border-accent forest-filter">
+                                <span class="text-lg font-medium text-neutral-200">森林守夜人</span>
+                            </div>
+                            <span class="text-neutral-200/70 font-medium">2025-11-22</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 文章卡片5 -->
+                <article
+                    class="post-card bg-neutral-800/70 bg-blur rounded-cartoon cartoon-shadow overflow-hidden animate-slide-up"
+                    style="animation-delay: 0.8s">
+                    <div class="relative h-56 overflow-hidden rounded-t-cartoon">
+                        <img src="https://picsum.photos/id/131/600/400" alt="文章封面"
+                            class="w-full h-full object-cover forest-filter"> <!-- 替换为文章封面图 -->
+                        <div
+                            class="absolute top-4 left-4 bg-accent/90 text-neutral-900 text-lg px-4 py-2 rounded-cartoon font-round category-tag">
+                            工具分享
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h4 class="text-2xl font-round font-bold mb-4 hover:text-accent transition-colors">
+                            <a href="#">新手必备的森林卡通绘画工具清单</a>
+                        </h4>
+                        <p class="text-neutral-200/90 mb-5 line-clamp-3 text-lg">
+                            想入坑森林卡通绘画却不知道买什么工具？这份新手友好的工具清单，从木质画笔到自然颜料，
+                            平价又好用，帮你少走弯路～
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <img src="https://picsum.photos/id/1005/60/60" alt="作者头像"
+                                    class="w-10 h-10 rounded-full mr-3 border-2 border-accent forest-filter">
+                                <span class="text-lg font-medium text-neutral-200">森林守夜人</span>
+                            </div>
+                            <span class="text-neutral-200/70 font-medium">2025-11-17</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 文章卡片6 -->
+                <article
+                    class="post-card bg-neutral-800/70 bg-blur rounded-cartoon cartoon-shadow overflow-hidden animate-slide-up"
+                    style="animation-delay: 1s">
+                    <div class="relative h-56 overflow-hidden rounded-t-cartoon">
+                        <img src="https://picsum.photos/id/142/600/400" alt="文章封面"
+                            class="w-full h-full object-cover forest-filter"> <!-- 替换为文章封面图 -->
+                        <div
+                            class="absolute top-4 left-4 bg-primary/90 text-white text-lg px-4 py-2 rounded-cartoon font-round category-tag">
+                            林间趣事
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h4 class="text-2xl font-round font-bold mb-4 hover:text-accent transition-colors">
+                            <a href="#">把森林日常画成卡通：我的趣味手绘日记</a>
+                        </h4>
+                        <p class="text-neutral-200/90 mb-5 line-clamp-3 text-lg">
+                            坚持用卡通风格记录森林生活已经两年啦！把每天的林间趣事画成可爱的漫画，
+                            平淡的日子也变得充满自然气息，分享我的手绘日记和创作心得～
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <img src="https://picsum.photos/id/1006/60/60" alt="作者头像"
+                                    class="w-10 h-10 rounded-full mr-3 border-2 border-accent forest-filter">
+                                <span class="text-lg font-medium text-neutral-200">森林守夜人</span>
+                            </div>
+                            <span class="text-neutral-200/70 font-medium">2025-11-10</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- 加载更多按钮 - 【后端对接点3：加载更多文章】 -->
+            <div class="text-center mt-16">
+                <button
+                    class="px-10 py-4 bg-neutral-800/80 border-3 border-accent rounded-cartoon font-round text-xl cartoon-btn hover:bg-accent/10 transition-colors firefly-glow btn-round"
+                    id="load-more-btn">
+                    探索更多 <i class="fa fa-leaf ml-3"></i> <!-- 后端对接：点击加载下一页文章 -->
+                </button>
+            </div>
+        </section>
+
+        <!-- 分类区域 - 【后端对接点4：分类数据】 -->
+        <section id="categories" class="mb-20">
+            <div class="text-center mb-16">
+                <h3
+                    class="text-[clamp(2rem,5vw,3.5rem)] font-round font-bold text-accent mb-6 text-cartoon animate-twinkle">
+                    夜话分类
+                </h3>
+                <div class="cartoon-divider"></div>
+            </div>
+
+            <!-- 分类卡片列表（后端对接：循环渲染分类数据） -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
+                <!-- 分类卡片1 -->
+                <div
+                    class="bg-neutral-800/70 bg-blur rounded-cartoon cartoon-shadow p-7 text-center hover:bg-primary/20 transition-all animate-slide-up firefly-glow">
+                    <div
+                        class="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 border-3 border-accent animate-pulse-soft">
+                        <i class="fa fa-paint-brush text-accent text-4xl"></i> <!-- 可替换分类图标 -->
+                    </div>
+                    <h4 class="text-2xl font-round font-bold mb-3 text-neutral-100">森林手绘</h4> <!-- 后端对接：分类名称 -->
+                    <p class="text-neutral-200/80 mb-5 text-lg">22篇夜话</p> <!-- 后端对接：分类下文章数量 -->
+                    <a href="#"
+                        class="text-accent hover:underline font-round text-lg inline-block px-5 py-2 border border-accent/30 rounded-full hover:bg-accent/10 transition-all btn-round">进入树洞</a>
+                    <!-- 后端对接：分类链接 -->
+                </div>
+
+                <!-- 分类卡片2 -->
+                <div class="bg-neutral-800/70 bg-blur rounded-cartoon cartoon-shadow p-7 text-center hover:bg-primary/20 transition-all animate-slide-up star-glow"
+                    style="animation-delay: 0.2s">
+                    <div
+                        class="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 border-3 border-accent animate-pulse-soft">
+                        <i class="fa fa-film text-accent text-4xl"></i>
+                    </div>
+                    <h4 class="text-2xl font-round font-bold mb-3 text-neutral-100">动漫杂谈</h4>
+                    <p class="text-neutral-200/80 mb-5 text-lg">16篇夜话</p>
+                    <a href="#"
+                        class="text-accent hover:underline font-round text-lg inline-block px-5 py-2 border border-accent/30 rounded-full hover:bg-accent/10 transition-all btn-round">进入树洞</a>
+                </div>
+
+                <!-- 分类卡片3 -->
+                <div class="bg-neutral-800/70 bg-blur rounded-cartoon cartoon-shadow p-7 text-center hover:bg-primary/20 transition-all animate-slide-up firefly-glow"
+                    style="animation-delay: 0.4s">
+                    <div
+                        class="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 border-3 border-accent animate-pulse-soft">
+                        <i class="fa fa-lightbulb-o text-accent text-4xl"></i>
+                    </div>
+                    <h4 class="text-2xl font-round font-bold mb-3 text-neutral-100">创作灵感</h4>
+                    <p class="text-neutral-200/80 mb-5 text-lg">28篇夜话</p>
+                    <a href="#"
+                        class="text-accent hover:underline font-round text-lg inline-block px-5 py-2 border border-accent/30 rounded-full hover:bg-accent/10 transition-all btn-round">进入树洞</a>
+                </div>
+
+                <!-- 分类卡片4 -->
+                <div class="bg-neutral-800/70 bg-blur rounded-cartoon cartoon-shadow p-7 text-center hover:bg-primary/20 transition-all animate-slide-up star-glow"
+                    style="animation-delay: 0.6s">
+                    <div
+                        class="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 border-3 border-accent animate-pulse-soft">
+                        <i class="fa fa-gift text-accent text-4xl"></i>
+                    </div>
+                    <h4 class="text-2xl font-round font-bold mb-3 text-neutral-100">周边分享</h4>
+                    <p class="text-neutral-200/80 mb-5 text-lg">32篇夜话</p>
+                    <a href="#"
+                        class="text-accent hover:underline font-round text-lg inline-block px-5 py-2 border border-accent/30 rounded-full hover:bg-accent/10 transition-all btn-round">进入树洞</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 关于我 -->
+        <section id="about" class="mb-20">
+            <div class="text-center mb-16">
+                <h3
+                    class="text-[clamp(2rem,5vw,3.5rem)] font-round font-bold text-accent mb-6 text-cartoon animate-twinkle">
+                    关于守夜人
+                </h3>
+                <div class="cartoon-divider"></div>
+            </div>
+
+            <div
+                class="bg-neutral-800/70 bg-blur rounded-cartoon-lg cartoon-shadow p-10 md:p-12 max-w-5xl mx-auto animate-fade-in">
+                <div class="flex flex-col md:flex-row gap-10 items-center">
+                    <div class="md:w-1/3 animate-slide-up">
+                        <div class="relative">
+                            <!-- 博主头像 - 【替换图片位置5】 -->
+                            <img src="https://picsum.photos/id/1027/400/400" alt="博主头像"
+                                class="w-64 h-64 rounded-full border-4 border-accent mx-auto forest-filter animate-pulse-soft">
+                            <!-- 替换为博主头像 -->
+                            <!-- 装饰元素 -->
+                            <div
+                                class="absolute -bottom-6 -right-6 w-24 h-24 bg-primary/30 rounded-full flex items-center justify-center border-3 border-accent firefly-glow">
+                                <i class="fa fa-heart text-accent text-3xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="md:w-2/3 animate-slide-up" style="animation-delay: 0.3s">
+                        <h4 class="text-3xl font-round font-bold mb-6 text-accent">你好呀，我是森林守夜人✨</h4> <!-- 可修改博主名称 -->
+                        <p class="mb-5 text-xl text-neutral-200">
+                            一个沉迷森林与卡通的90后插画师，从小就爱在林间写生，梦想把森林里的每一个美好瞬间都画成可爱的卡通形象。
+                        </p>
+                        <p class="mb-5 text-xl text-neutral-200">
+                            2018年开始专注森林主题卡通创作，擅长Q版森林精灵、治愈系自然场景绘制，希望用我的画笔给大家带来自然的温柔和治愈。
+                        </p>
+                        <p class="mb-8 text-xl text-neutral-200">
+                            开这个博客的初衷，是想和同样喜欢森林、热爱卡通的小伙伴分享创作技巧和林间趣事，一起在自然的怀抱里撒欢～
+                        </p>
+                        <!-- 社交链接 - 【后端对接点5：博主社交账号】 -->
+                        <div class="flex gap-6">
+                            <a href="#"
+                                class="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/50 transition-colors border-2 border-accent firefly-glow btn-round">
+                                <i class="fa fa-weibo text-accent text-2xl"></i> <!-- 替换为微博链接 -->
+                            </a>
+                            <a href="#"
+                                class="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/50 transition-colors border-2 border-accent star-glow btn-round">
+                                <i class="fa fa-wechat text-accent text-2xl"></i> <!-- 替换为微信链接 -->
+                            </a>
+                            <a href="#"
+                                class="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/50 transition-colors border-2 border-accent firefly-glow btn-round">
+                                <i class="fa fa-instagram text-accent text-2xl"></i> <!-- 替换为INS链接 -->
+                            </a>
+                            <a href="#"
+                                class="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/50 transition-colors border-2 border-accent star-glow btn-round">
+                                <i class="fa fa-qq text-accent text-2xl"></i> <!-- 替换为QQ链接 -->
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 联系我 - 【后端对接点6：表单提交】 -->
+        <section id="contact" class="mb-20">
+            <div class="text-center mb-16">
+                <h3
+                    class="text-[clamp(2rem,5vw,3.5rem)] font-round font-bold text-accent mb-6 text-cartoon animate-twinkle">
+                    林间树洞
+                </h3>
+                <div class="cartoon-divider"></div>
+            </div>
+
+            <div
+                class="max-w-5xl mx-auto bg-neutral-800/70 bg-blur rounded-cartoon-lg cartoon-shadow p-10 md:p-12 animate-fade-in">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <!-- 联系信息（可修改为自己的联系方式） -->
+                    <div class="animate-slide-up">
+                        <h4 class="text-3xl font-round font-bold mb-8 text-accent">想和我唠唠森林那些事儿？</h4>
+                        <div class="space-y-7">
+                            <div class="flex items-start">
+                                <div
+                                    class="w-14 h-14 bg-primary/20 rounded-full flex items-center justify-center mr-5 flex-shrink-0 border-2 border-accent firefly-glow btn-round">
+                                    <i class="fa fa-envelope text-accent text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h5 class="font-round font-bold mb-2 text-xl text-neutral-100">树洞邮箱</h5>
+                                    <p class="text-neutral-200/90 text-lg">night@foreststar.com</p> <!-- 替换为自己的邮箱 -->
+                                </div>
+                            </div>
+
+                            <div class="flex items-start">
+                                <div
+                                    class="w-14 h-14 bg-primary/20 rounded-full flex items-center justify-center mr-5 flex-shrink-0 border-2 border-accent star-glow btn-round">
+                                    <i class="fa fa-wechat text-accent text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h5 class="font-round font-bold mb-2 text-xl text-neutral-100">微信树洞</h5>
+                                    <p class="text-neutral-200/90 text-lg">forest-love99</p> <!-- 替换为自己的微信号 -->
+                                </div>
+                            </div>
+
+                            <div class="flex items-start">
+                                <div
+                                    class="w-14 h-14 bg-primary/20 rounded-full flex items-center justify-center mr-5 flex-shrink-0 border-2 border-accent firefly-glow btn-round">
+                                    <i class="fa fa-location-arrow text-accent text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h5 class="font-round font-bold mb-2 text-xl text-neutral-100">林间坐标</h5>
+                                    <p class="text-neutral-200/90 text-lg">藏在星光下的魔法森林深处</p> <!-- 替换为简介 -->
+                                </div>
+                            </div>
+
+                            <div class="flex items-start">
+                                <div
+                                    class="w-14 h-14 bg-primary/20 rounded-full flex items-center justify-center mr-5 flex-shrink-0 border-2 border-accent star-glow btn-round">
+                                    <i class="fa fa-clock-o text-accent text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h5 class="font-round font-bold mb-2 text-xl text-neutral-100">树洞回复</h5>
+                                    <p class="text-neutral-200/90 text-lg">每晚 19:00-23:00（萤火虫亮起时～）</p> <!-- 替换为回复时间 -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 联系表单 - 【后端对接点7：表单提交接口】 -->
+                    <div class="animate-slide-up" style="animation-delay: 0.3s">
+                        <h4 class="text-3xl font-round font-bold mb-8 text-accent">给森林留句话吧💬</h4>
+                        <form class="space-y-7" id="contact-form"> <!-- 后端对接：绑定表单提交事件 -->
+                            <div>
+                                <label class="block mb-3 font-round text-lg text-neutral-200" for="name">你的名字</label>
+                                <input type="text" id="name" name="name"
+                                    class="w-full px-6 py-3 bg-neutral-900/80 rounded-cartoon border-2 border-accent/40 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent text-lg text-neutral-100 btn-round"
+                                    required>
+                            </div>
+
+                            <div>
+                                <label class="block mb-3 font-round text-lg text-neutral-200" for="email">你的邮箱</label>
+                                <input type="email" id="email" name="email"
+                                    class="w-full px-6 py-3 bg-neutral-900/80 rounded-cartoon border-2 border-accent/40 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent text-lg text-neutral-100 btn-round"
+                                    required>
+                            </div>
+
+                            <div>
+                                <label class="block mb-3 font-round text-lg text-neutral-200"
+                                    for="message">想对森林说的话</label>
+                                <textarea id="message" name="message" rows="5"
+                                    class="w-full px-6 py-3 bg-neutral-900/80 rounded-cartoon border-2 border-accent/40 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent text-lg text-neutral-100 resize-none btn-round-lg"
+                                    required></textarea>
+                            </div>
+
+                            <button type="submit"
+                                class="w-full px-8 py-3 bg-primary text-white font-round rounded-cartoon cartoon-btn hover:bg-primary/90 text-xl firefly-glow btn-round">
+                                投进树洞 <i class="fa fa-paper-plane ml-2"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-neutral-900/80 bg-blur cartoon-shadow py-10">
+        <div class="container mx-auto px-4 text-center">
+            <div class="flex justify-center items-center mb-8">
+                <div
+                    class="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center border-2 border-accent mr-4 animate-pulse-soft firefly-glow btn-round">
+                    <i class="fa fa-tree text-primary text-3xl"></i>
+                </div>
+                <h2 class="text-3xl font-round font-bold text-accent text-cartoon">森林夜话</h2> <!-- 可修改网站名称 -->
+            </div>
+
+            <!-- 页脚导航（可修改菜单项） -->
+            <div class="flex flex-wrap justify-center gap-8 mb-8">
+                <a href="#home" class="font-round text-xl hover:text-accent transition-colors">首页</a>
+                <a href="#posts" class="font-round text-xl hover:text-accent transition-colors">夜话</a>
+                <a href="#categories" class="font-round text-xl hover:text-accent transition-colors">分类</a>
+                <a href="#about" class="font-round text-xl hover:text-accent transition-colors">关于我</a>
+                <a href="#contact" class="font-round text-xl hover:text-accent transition-colors">树洞</a>
+            </div>
+
+            <!-- 页脚社交链接（可修改） -->
+            <div class="flex justify-center gap-6 mb-8">
+                <a href="#"
+                    class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/50 transition-colors border-2 border-accent firefly-glow btn-round">
+                    <i class="fa fa-weibo text-accent text-xl"></i>
+                </a>
+                <a href="#"
+                    class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/50 transition-colors border-2 border-accent star-glow btn-round">
+                    <i class="fa fa-wechat text-accent text-xl"></i>
+                </a>
+                <a href="#"
+                    class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/50 transition-colors border-2 border-accent firefly-glow btn-round">
+                    <i class="fa fa-instagram text-accent text-xl"></i>
+                </a>
+                <a href="#"
+                    class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/50 transition-colors border-2 border-accent star-glow btn-round">
+                    <i class="fa fa-qq text-accent text-xl"></i>
+                </a>
+            </div>
+
+            <!-- 版权信息（可修改） -->
+            <div class="text-neutral-200/80 text-lg font-medium animate-twinkle">
+                © 2025 森林夜话 - 让每一个夜晚都有森林和卡通相伴 🌿
+            </div>
+        </div>
+    </footer>
+
+    <!-- 返回顶部按钮 -->
+    <button id="back-to-top"
+        class="fixed bottom-10 right-10 w-16 h-16 bg-accent text-neutral-900 rounded-full flex items-center justify-center cartoon-shadow opacity-0 invisible transition-all hover:bg-accent/90 border-3 border-white firefly-glow btn-round">
+        <i class="fa fa-arrow-up text-2xl"></i>
+    </button>
+
+    <!-- JavaScript - 【后端对接核心区域】 -->
+    <script>
+        // ===================== 基础功能 =====================
+        // 返回顶部按钮
+        const backToTopBtn = document.getElementById('back-to-top');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.remove('opacity-0', 'invisible');
+                backToTopBtn.classList.add('opacity-100', 'visible', 'animate-pulse-soft');
+            } else {
+                backToTopBtn.classList.add('opacity-0', 'invisible');
+                backToTopBtn.classList.remove('opacity-100', 'visible', 'animate-pulse-soft');
+            }
+        });
+
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+            backToTopBtn.classList.add('animate-bounce');
+            setTimeout(() => {
+                backToTopBtn.classList.remove('animate-bounce');
+            }, 800);
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // 元素进入视口动画
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        // 初始化动画元素
+        document.querySelectorAll('.animate-fade-in, .animate-slide-up, .animate-twinkle').forEach(el => {
+            el.style.opacity = 0;
+            if (el.classList.contains('animate-slide-up')) {
+                el.style.transform = 'translateY(20px)';
+            }
+            el.style.transition = 'opacity 0.8s ease-out, transform 0.6s ease-out';
+            observer.observe(el);
+        });
+
+        // 生成少量萤火虫
+        function createFireflies(count) {
+            const container = document.body;
+            for (let i = 0; i < count; i++) {
+                const firefly = document.createElement('div');
+                firefly.classList.add('firefly', 'animate-firefly');
+                const top = Math.random() * 100;
+                const left = Math.random() * 100;
+                const delay = Math.random() * 6;
+                firefly.style.top = `${top}%`;
+                firefly.style.left = `${left}%`;
+                firefly.style.animationDelay = `${delay}s`;
+                container.appendChild(firefly);
+            }
+        }
+
+        // ===================== 后端对接 - 核心接口 =====================
+        // 1. 搜索功能对接
+        const searchInput = document.getElementById('search-input');
+        const searchBtn = document.getElementById('search-btn');
+
+        // 搜索接口函数（示例）
+        async function searchPosts(keyword) {
+            try {
+                // 替换为你的后端接口地址
+                const response = await fetch(`/api/posts/search?keyword=${encodeURIComponent(keyword)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // 可添加认证信息：'Authorization': 'Bearer ' + token
+                    }
+                });
+
+                if (!response.ok) throw new Error('搜索失败');
+                const data = await response.json();
+
+                // 渲染搜索结果（需实现renderSearchResults函数）
+                renderSearchResults(data);
+            } catch (error) {
+                console.error('搜索出错：', error);
+                alert('搜索失败，请稍后再试');
+            }
+        }
+
+        // 绑定搜索事件
+        if (searchBtn && searchInput) {
+            searchBtn.addEventListener('click', () => {
+                const keyword = searchInput.value.trim();
+                if (keyword) searchPosts(keyword);
+            });
+
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const keyword = searchInput.value.trim();
+                    if (keyword) searchPosts(keyword);
+                }
+            });
+        }
+
+        // 2. 加载更多文章对接
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        let currentPage = 1; // 当前页码
+        const pageSize = 6;   // 每页数量
+
+        // 加载更多文章函数（示例）
+        async function loadMorePosts() {
+            try {
+                loadMoreBtn.disabled = true;
+                loadMoreBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i> 加载中...';
+
+                // 替换为你的后端接口地址
+                const response = await fetch(`/api/posts?page=${currentPage + 1}&size=${pageSize}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) throw new Error('加载失败');
+                const data = await response.json();
+
+                if (data.list && data.list.length > 0) {
+                    currentPage++;
+                    // 渲染更多文章（需实现renderMorePosts函数）
+                    renderMorePosts(data.list);
+                } else {
+                    loadMoreBtn.innerHTML = '没有更多内容了 😊';
+                    loadMoreBtn.classList.add('opacity-70', 'cursor-not-allowed');
+                }
+            } catch (error) {
+                console.error('加载更多出错：', error);
+                alert('加载失败，请稍后再试');
+                loadMoreBtn.innerHTML = '探索更多 <i class="fa fa-leaf ml-3"></i>';
+            } finally {
+                loadMoreBtn.disabled = false;
+            }
+        }
+
+        // 绑定加载更多事件
+        if (loadMoreBtn) {
+            loadMoreBtn.addEventListener('click', loadMorePosts);
+        }
+
+        // 3. 联系表单提交对接
+        const contactForm = document.getElementById('contact-form');
+
+        // 表单提交函数（示例）
+        async function submitContactForm(formData) {
+            try {
+                // 替换为你的后端接口地址
+                const response = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) throw new Error('提交失败');
+                const data = await response.json();
+
+                alert('留言成功！我会尽快回复你的 💖');
+                contactForm.reset(); // 重置表单
+            } catch (error) {
+                console.error('表单提交出错：', error);
+                alert('提交失败，请稍后再试');
+            }
+        }
+
+        // 绑定表单提交事件
+        if (contactForm) {
+            contactForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                // 收集表单数据
+                const formData = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    message: document.getElementById('message').value,
+                    createTime: new Date().toISOString() // 可选：添加提交时间
+                };
+
+                submitContactForm(formData);
+            });
+        }
+
+        // ===================== 页面初始化 =====================
+        window.addEventListener('load', () => {
+            createFireflies(5); // 生成萤火虫数量可调整
+
+            // 导航栏滚动效果
+            const header = document.querySelector('header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 100) {
+                    header.style.background = 'rgba(15, 52, 96, 0.8)';
+                } else {
+                    header.style.background = 'rgba(15, 52, 96, 0.7)';
+                }
+            });
+
+            // 初始化时加载第一页文章（可选）
+            // loadMorePosts();
+        });
+
+        // ===================== 待实现的渲染函数（示例） =====================
+        // 渲染搜索结果
+        function renderSearchResults(posts) {
+            const container = document.getElementById('post-list-container');
+            // 清空原有内容（可选）
+            // container.innerHTML = '';
+
+            // 循环生成文章卡片（参考现有卡片结构）
+            posts.forEach(post => {
+                const postCard = `
+                    <article class="post-card bg-neutral-800/70 bg-blur rounded-cartoon cartoon-shadow overflow-hidden animate-slide-up">
+                        <div class="relative h-56 overflow-hidden rounded-t-cartoon">
+                            <img src="${post.coverImage || 'https://picsum.photos/id/1082/600/400'}" alt="${post.title}" class="w-full h-full object-cover forest-filter">
+                            <div class="absolute top-4 left-4 bg-accent/90 text-neutral-900 text-lg px-4 py-2 rounded-cartoon font-round category-tag">
+                                ${post.category}
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h4 class="text-2xl font-round font-bold mb-4 hover:text-accent transition-colors">
+                                <a href="/post/${post.id}">${post.title}</a>
+                            </h4>
+                            <p class="text-neutral-200/90 mb-5 line-clamp-3 text-lg">
+                                ${post.summary}
+                            </p>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <img src="${post.author.avatar || 'https://picsum.photos/id/1005/60/60'}" alt="${post.author.name}" class="w-10 h-10 rounded-full mr-3 border-2 border-accent forest-filter">
+                                    <span class="text-lg font-medium text-neutral-200">${post.author.name}</span>
+                                </div>
+                                <span class="text-neutral-200/70 font-medium">${formatDate(post.createTime)}</span>
+                            </div>
+                        </div>
+                    </article>
+                `;
+                container.innerHTML += postCard;
+            });
+        }
+
+        // 渲染更多文章（类似搜索结果渲染）
+        function renderMorePosts(posts) {
+            const container = document.getElementById('post-list-container');
+            posts.forEach(post => {
+                // 同上，生成文章卡片HTML并追加到容器
+            });
+        }
+
+        // 日期格式化工具函数（示例）
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        }
+    </script>
+</body>
+
+</html>

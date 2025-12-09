@@ -16,7 +16,8 @@ from django.http import HttpResponseNotFound
 import os
 
 # Create your views here.
-
+def hello(request):
+    return render(request, 'newIndex.html')
 
 def index(request):
     # 获取所有博客
