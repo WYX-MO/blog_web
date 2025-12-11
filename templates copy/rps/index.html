@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>石头剪刀布 - 首页</title>
+    <style>
+        body {
+            font-family: Arial;
+            max-width: 500px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 18px;
+            width: 300px;
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 10px 30px;
+            font-size: 18px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0b7dda;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>石头剪刀布双人对战</h1>
+    <div>
+        <input type="text" id="roomName" placeholder="输入房间名（如111）" value="111">
+        <br>
+        <button onclick="enterRoom()">进入房间</button>
+    </div>
+
+    <script>
+        function enterRoom() {
+            const roomName = document.getElementById('roomName').value.trim();
+            if (!roomName) {
+                alert('请输入房间名！');
+                return;
+            }
+            window.location.href = `/game/${roomName}/`;
+        }
+    </script>
+</body>
+
+</html>

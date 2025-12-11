@@ -1,0 +1,96 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <!-- <link rel="stylesheet" href="{% static 'css/styles.css' %}"> -->
+    <!-- base.html 头部 -->
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script>
+        $(function () {
+            var isAuthenticated = "{{ request.user.is_authenticated }}" === "True";
+
+            $(document).on("click", "#star-show", function (e) {
+                e.preventDefault(); // 阻止<a>标签默认跳转
+                const $a = $(this);
+
+                if (!isAuthenticated) {
+                    window.location.href = "{% url 'blogAuth:blogAuth_login' %}";
+                    return;
+                }
+
+                // 跳转到index页面，URL参数传递?flag=1
+                window.location.href = "{% url 'blogMain:blogMain_search' %}?q=user_stared_114";
+            });
+        });
+    </script>
+    {% block head %}{% endblock %}
+</head>
+
+<body class="custom-bg-gradient">
+    <header class="p-3 text-bg-dark border-bottom mb-3">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a href="/blog" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                    <img src="{% static 'image/logo_img.png' %}" alt="Bootstrap" width="55" height="55"
+                        class="d-inline-block align-text-top rounded-5">
+                </a>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                    <li><a href="#" class="nav-link px-2 text-secondary">主页</a></li>
+                    <li><a href="{% url 'blogMain:blogMain_index' %}" class="nav-link px-2 text-white">广场</a></li>
+                    <li><a href="{% url 'blogMain:blogMain_public' %}" class="nav-link px-2 text-white">发布</a></li>
+                    <li><a href="#" class="nav-link px-2 text-white" id="star-show">收藏</a></li>
+                    <li><a href="{% url 'blogMain:download_index' %}"class="nav-link px-2 text-white">下载</a></li>
+                </ul>
+
+                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search" method="GET"
+                    action="{% url 'blogMain:blogMain_search' %}">
+                    <input type="search" class="form-control form-control-dark text-bg-dark text-white"
+                        placeholder="搜索..." aria-label="Search" name="q">
+                </form>
+
+                {% if user.is_authenticated %}
+                <div class="dropdown text-end">
+                    <a href="#" class="d-block link-light text-decoration-none dropdown-toggle"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="{% static 'image/logo_img.png' %}" alt="用户头像" width="32" height="32"
+                            class="rounded-circle border border-secondary">
+                    </a>
+                    <!-- 使用 Bootstrap 内置的 dropdown-menu-dark 类实现深色菜单 -->
+                    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-small">
+                        <!-- <li><a class="dropdown-item" href="#">New project...</a></li>
+                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li><a class="dropdown-item" href="#">Profile</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li> -->
+                        <li><a class="dropdown-item text-danger" href="{% url 'blogAuth:blogAuth_logout' %}">Sign
+                                out</a></li>
+                    </ul>
+                </div>
+                {% else %}
+                <div class="text-end">
+                    <a href="{% url 'blogAuth:blogAuth_login' %}" class="btn btn-outline-light me-2">登录</a>
+                    <a href="{% url 'blogAuth:blogAuth_register' %}" class="btn btn-warning">注册</a>
+                </div>
+                {% endif %}
+
+
+            </div>
+        </div>
+    </header>
+
+    <main class="container mt-5 p-3 bg-dark rounded-5">
+        {% block main %}{% endblock %}
+    </main>
+</body>
+
+</html>

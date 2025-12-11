@@ -1,18 +1,27 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
-    <!-- <link rel="stylesheet" href="{% static 'css/styles.css' %}"> -->
-    <!-- base.html 头部 -->
+    <!-- 引入Tailwind CSS CDN（生产环境建议本地部署） -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome图标库（图标可替换，参考https://fontawesome.com/v4/icons/） -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 引入圆润卡通字体（可替换为其他字体，如幼圆、微软雅黑等） -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700&display=swap"
+        rel="stylesheet">
 
+    <!-- 原有的-->
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
-    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+
     <script>
         $(function () {
             var isAuthenticated = "{{ request.user.is_authenticated }}" === "True";
@@ -31,66 +40,387 @@
             });
         });
     </script>
+
+
+    <!-- 自定义Tailwind配置（颜色、动画、圆角等核心样式配置区） -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // 主题色配置区 - 可修改为自己的品牌色
+                        primary: '#2D6A4F',    // 森林绿主色
+                        secondary: '#1B4332',  // 深林绿辅助色
+                        accent: '#F9C74F',     // 萤火黄点缀色
+                        star: '#90E0EF',       // 星空蓝
+                        neutral: {
+                            100: '#F8F9FA',    // 浅灰
+                            200: '#E9ECEF',    // 中浅灰
+                            800: '#1A1A2E',    // 深灰
+                            900: '#0F3460',    // 最深灰/深蓝
+                        },
+                    },
+                    fontFamily: {
+                        // 字体配置区 - 可替换为其他圆润字体
+                        'round': ['ZCOOL KuaiLe', 'cursive'], // 最圆润的卡通字体
+                        'round-secondary': ['Ma Shan Zheng', 'cursive'], // 次圆润字体
+                        'sans': ['Noto Sans SC', 'sans-serif'], // 基础无衬线字体
+                    },
+                    animation: {
+                        // 动画配置区 - 可调整动画时长、效果
+                        'float': 'float 6s ease-in-out infinite',     // 漂浮动画
+                        'twinkle': 'twinkle 3s ease-in-out infinite', // 闪烁动画
+                        'firefly': 'firefly 8s ease-in-out infinite', // 萤火虫动画
+                        'pulse-soft': 'pulseSoft 4s ease-in-out infinite', // 柔和脉冲
+                        'fade-in': 'fadeIn 1s ease-out forwards',     // 淡入
+                        'slide-up': 'slideUp 0.8s ease-out forwards', // 上滑
+                    },
+                    keyframes: {
+                        // 动画关键帧定义 - 可调整动画细节
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-10px) rotate(1deg)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: 0 },
+                            '100%': { opacity: 1 },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(30px)', opacity: 0 },
+                            '100%': { transform: 'translateY(0)', opacity: 1 },
+                        },
+                        twinkle: {
+                            '0%, 100%': { opacity: 0.5, transform: 'scale(1)' },
+                            '50%': { opacity: 1, transform: 'scale(1.1)' },
+                        },
+                        firefly: {
+                            '0%': { transform: 'translate(0, 0)', opacity: 0 },
+                            '25%': { transform: 'translate(15px, -10px)', opacity: 1 },
+                            '50%': { transform: 'translate(30px, 5px)', opacity: 0.8 },
+                            '75%': { transform: 'translate(10px, 15px)', opacity: 1 },
+                            '100%': { transform: 'translate(0, 0)', opacity: 0 },
+                        },
+                        pulseSoft: {
+                            '0%, 100%': { transform: 'scale(1)', boxshadow: '0 0 15px rgba(249, 199, 79, 0.2)' },
+                            '50%': { transform: 'scale(1.03)', boxshadow: '0 0 25px rgba(249, 199, 79, 0.4)' },
+                        },
+                    },
+                    borderRadius: {
+                        // 圆角配置区 - 可调整圆角大小
+                        'cartoon': '30px',    // 基础卡通圆角
+                        'cartoon-lg': '40px', // 大卡通圆角
+                        'btn-full': '9999px', // 全圆角（按钮用）
+                    }
+                },
+            }
+        }
+    </script>
+
+    <!-- 自定义工具类（可扩展自己的样式类） -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .cartoon-shadow {
+                box-shadow: 0 8px 0 rgba(15, 52, 96, 0.12), 0 4px 10px rgba(15, 52, 96, 0.08);
+            }
+            .bg-blur {
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+            }
+            .text-cartoon {
+                text-shadow: 1px 1px 0 rgba(15, 52, 96, 0.1);
+            }
+            .cartoon-border {
+                border: 3px solid #0F3460;
+                border-radius: 30px;
+                box-shadow: 4px 4px 0 #0F3460;
+            }
+            .star-glow {
+                box-shadow: 0 0 12px rgba(144, 224, 239, 0.6), 0 0 20px rgba(144, 224, 239, 0.3);
+            }
+            .firefly-glow {
+                box-shadow: 0 0 10px rgba(249, 199, 79, 0.8), 0 0 20px rgba(249, 199, 79, 0.5);
+            }
+            .btn-round {
+                border-radius: 9999px !important;
+            }
+            .btn-round-lg {
+                border-radius: 40px !important;
+            }
+        }
+    </style>
+
+    <style>
+        /* 基础全局样式 */
+        body {
+            background: linear-gradient(180deg, #0F3460 0%, #1A1A2E 50%, #1B4332 100%);
+            background-attachment: fixed;
+            background-position: center;
+            overflow-x: hidden;
+            position: relative;
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.6;
+        }
+
+        /* 星空背景（可修改星星大小、颜色、密度） */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80%;
+            background-image:
+                radial-gradient(2px 2px at 20px 30px, #90E0EF, rgba(0, 0, 0, 0)),
+                radial-gradient(2px 2px at 40px 70px, #FFFFFF, rgba(0, 0, 0, 0)),
+                radial-gradient(1px 1px at 90px 40px, #FFFFFF, rgba(0, 0, 0, 0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            opacity: 0.6;
+            z-index: -2;
+        }
+
+        /* 森林剪影背景 - 【替换图片位置1】 */
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 75%;
+            background-image: url("../../static/image/bk.png");
+            /* 替换为自己的森林剪影图片URL */
+            background-size: cover;
+            background-position: bottom;
+            opacity: 0.3;
+            z-index: -1;
+            mask-image: linear-gradient(to top, black 70%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to top, black 70%, transparent 100%);
+        }
+
+        /* 萤火虫样式（可调整大小、颜色） */
+        .firefly {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #F9C74F;
+            border-radius: 50%;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        /* 文章卡片悬停效果（可调整悬停位移、阴影） */
+        .post-card {
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .post-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 0 rgba(15, 52, 96, 0.15), 0 8px 15px rgba(15, 52, 96, 0.1);
+        }
+
+        /* 森林风格分割线（可修改颜色、高度、宽度） */
+        .cartoon-divider {
+            height: 6px;
+            background: linear-gradient(90deg, transparent, #2D6A4F, #F9C74F, #90E0EF, transparent);
+            border-radius: 3px;
+            width: 80%;
+            margin: 2rem auto;
+        }
+
+        /* 按钮样式（可调整悬停效果） */
+        .cartoon-btn {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border-radius: 9999px;
+        }
+
+        .cartoon-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 0 rgba(15, 52, 96, 0.1);
+        }
+
+        /* 图片滤镜（可调整滤镜参数） */
+        .forest-filter {
+            filter: sepia(15%) hue-rotate(100deg) brightness(0.95) contrast(1.05);
+            transition: filter 0.4s ease;
+        }
+
+        .forest-filter:hover {
+            filter: sepia(10%) hue-rotate(100deg) brightness(1) contrast(1.1);
+        }
+
+        /* 输入框样式（可调整边框、阴影） */
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            border-radius: 9999px !important;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        textarea:focus {
+            transform: translateY(-1px);
+            box-shadow: 0 0 15px rgba(249, 199, 79, 0.3);
+        }
+
+        /* 分类标签样式 */
+        .category-tag {
+            border-radius: 9999px !important;
+        }
+
+        /* 导航下划线动画 */
+        .nav-underline {
+            transition: all 0.4s ease;
+        }
+    </style>
     {% block head %}{% endblock %}
 </head>
 
-<body class="custom-bg-gradient">
-    <header class="p-3 text-bg-dark border-bottom mb-3">
-        <div class="container">
-            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                <a href="/blog" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                    <img src="{% static 'image/logo_img.png' %}" alt="Bootstrap" width="55" height="55"
-                        class="d-inline-block align-text-top rounded-5">
+<body class="text-neutral-100 min-h-screen">
+    <!-- 萤火虫装饰元素（可调整数量、位置） -->
+    <div class="firefly animate-firefly" style="top: 25%; left: 15%; animation-delay: 0s;"></div>
+    <div class="firefly animate-firefly" style="top: 45%; left: 85%; animation-delay: 2s;"></div>
+    <div class="firefly animate-firefly" style="top: 65%; left: 35%; animation-delay: 4s;"></div>
+
+    <!-- 导航栏 -->
+    <header class="sticky top-0 z-50 bg-neutral-900/70 bg-blur cartoon-shadow">
+        <div class="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
+            <!-- Logo区域 -->
+            <div class="flex items-center mb-4 md:mb-0 animate-float pulse-soft">
+                <div
+                    class="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center cartoon-border mr-4 star-glow">
+                    <i class="fa fa-tree text-primary text-4xl"></i> <!-- 可替换Logo图标 -->
+                </div>
+                <h1 class="text-4xl font-round font-bold text-cartoon text-accent">森林夜话</h1> <!-- 可修改网站名称 -->
+            </div>
+
+            <!-- 导航菜单（可修改菜单项、链接） -->
+            <nav class="flex flex-wrap justify-center gap-6 md:gap-8">
+                <a href="#" class="font-round text-xl hover:text-accent transition-colors relative group">
+                    首页
+                    <span
+                        class="absolute bottom-0 left-0 w-0 h-2 bg-accent rounded-full nav-underline group-hover:w-full"></span>
                 </a>
+                <a href="{% url 'blogMain:blogMain_index' %}"
+                    class="font-round text-xl hover:text-accent transition-colors relative group">
+                    广场
+                    <span
+                        class="absolute bottom-0 left-0 w-0 h-2 bg-accent rounded-full nav-underline group-hover:w-full"></span>
+                </a>
+                <a href="{% url 'blogMain:blogMain_public' %}"
+                    class="font-round text-xl hover:text-accent transition-colors relative group">
+                    发布
+                    <span
+                        class="absolute bottom-0 left-0 w-0 h-2 bg-accent rounded-full nav-underline group-hover:w-full"></span>
+                </a>
+                <a href="#" class="font-round text-xl hover:text-accent transition-colors relative group">
+                    收藏
+                    <span
+                        class="absolute bottom-0 left-0 w-0 h-2 bg-accent rounded-full nav-underline group-hover:w-full"></span>
+                </a>
+                <a href="{% url 'blogMain:download_index' %}"
+                    class="font-round text-xl hover:text-accent transition-colors relative group">
+                    下载
+                    <span
+                        class="absolute bottom-0 left-0 w-0 h-2 bg-accent rounded-full nav-underline group-hover:w-full"></span>
+                </a>
+            </nav>
 
-                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                    <li><a href="#" class="nav-link px-2 text-secondary">主页</a></li>
-                    <li><a href="{% url 'blogMain:blogMain_index' %}" class="nav-link px-2 text-white">广场</a></li>
-                    <li><a href="{% url 'blogMain:blogMain_public' %}" class="nav-link px-2 text-white">发布</a></li>
-                    <li><a href="#" class="nav-link px-2 text-white" id="star-show">收藏</a></li>
-                    <li><a href="{% url 'blogMain:download_index' %}"class="nav-link px-2 text-white">下载</a></li>
-                </ul>
-
+            <!-- 搜索框 - 【后端对接点1：搜索功能】 -->
+            <div class="mt-4 md:mt-0 relative">
                 <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search" method="GET"
                     action="{% url 'blogMain:blogMain_search' %}">
-                    <input type="search" class="form-control form-control-dark text-bg-dark text-white"
-                        placeholder="搜索..." aria-label="Search" name="q">
+                    <input type="search" placeholder="搜索森林里的故事..."
+                        class="px-5 py-3 pl-12 bg-neutral-800/80 rounded-cartoon border-2 border-accent/30 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent text-lg text-neutral-100 btn-round"
+                        id="search-input" aria-label="Search" name="q"> <!-- 后端对接：绑定搜索接口，监听回车/点击事件 -->
+                    <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-accent/80 text-xl"
+                        id="search-btn"></i> 
                 </form>
-
-                {% if user.is_authenticated %}
-                <div class="dropdown text-end">
-                    <a href="#" class="d-block link-light text-decoration-none dropdown-toggle"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="{% static 'image/logo_img.png' %}" alt="用户头像" width="32" height="32"
-                            class="rounded-circle border border-secondary">
-                    </a>
-                    <!-- 使用 Bootstrap 内置的 dropdown-menu-dark 类实现深色菜单 -->
-                    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-small">
-                        <!-- <li><a class="dropdown-item" href="#">New project...</a></li>
-                        <li><a class="dropdown-item" href="#">Settings</a></li>
-                        <li><a class="dropdown-item" href="#">Profile</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li> -->
-                        <li><a class="dropdown-item text-danger" href="{% url 'blogAuth:blogAuth_logout' %}">Sign
-                                out</a></li>
-                    </ul>
-                </div>
-                {% else %}
-                <div class="text-end">
-                    <a href="{% url 'blogAuth:blogAuth_login' %}" class="btn btn-outline-light me-2">登录</a>
-                    <a href="{% url 'blogAuth:blogAuth_register' %}" class="btn btn-warning">注册</a>
-                </div>
-                {% endif %}
-
-
             </div>
+            {% if user.is_authenticated %}
+            <div class="dropdown text-end">
+                <a href="#" class="d-block link-light text-decoration-none dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <img src="{% static 'image/logo_img.png' %}" alt="用户头像" width="32" height="32"
+                        class="rounded-circle border border-secondary">
+                </a>
+                <!-- 使用 Bootstrap 内置的 dropdown-menu-dark 类实现深色菜单 -->
+                <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-small">
+                    <!-- <li><a class="dropdown-item" href="#">New project...</a></li>
+                                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li> -->
+                    <li><a class="dropdown-item text-danger" href="{% url 'blogAuth:blogAuth_logout' %}">Sign
+                            out</a></li>
+                </ul>
+            </div>
+            {% else %}
+            <div class="text-end">
+                <a href="{% url 'blogAuth:blogAuth_login' %}" class="btn btn-outline-light me-2">登录</a>
+                <a href="{% url 'blogAuth:blogAuth_register' %}" class="btn btn-warning">注册</a>
+            </div>
+            {% endif %}
         </div>
     </header>
 
-    <main class="container mt-5 p-3 bg-dark rounded-5">
+    <main class="container mx-auto px-4 py-8">
         {% block main %}{% endblock %}
     </main>
 </body>
+
+<footer class="bg-neutral-900/80 bg-blur cartoon-shadow py-10">
+    <div class="container mx-auto px-4 text-center">
+        <div class="flex justify-center items-center mb-8">
+            <div
+                class="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center border-2 border-accent mr-4 animate-pulse-soft firefly-glow btn-round">
+                <i class="fa fa-tree text-primary text-3xl"></i>
+            </div>
+            <h2 class="text-3xl font-round font-bold text-accent text-cartoon">森林夜话</h2> <!-- 可修改网站名称 -->
+        </div>
+
+        <!-- 页脚导航（可修改菜单项） -->
+        <div class="flex flex-wrap justify-center gap-8 mb-8">
+            <a href="#home" class="font-round text-xl hover:text-accent transition-colors">首页</a>
+            <a href="#posts" class="font-round text-xl hover:text-accent transition-colors">夜话</a>
+            <a href="#categories" class="font-round text-xl hover:text-accent transition-colors">分类</a>
+            <a href="#about" class="font-round text-xl hover:text-accent transition-colors">关于我</a>
+            <a href="#contact" class="font-round text-xl hover:text-accent transition-colors">树洞</a>
+        </div>
+
+        <!-- 页脚社交链接（可修改） -->
+        <div class="flex justify-center gap-6 mb-8">
+            <a href="#"
+                class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/50 transition-colors border-2 border-accent firefly-glow btn-round">
+                <i class="fa fa-weibo text-accent text-xl"></i>
+            </a>
+            <a href="#"
+                class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/50 transition-colors border-2 border-accent star-glow btn-round">
+                <i class="fa fa-wechat text-accent text-xl"></i>
+            </a>
+            <a href="#"
+                class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/50 transition-colors border-2 border-accent firefly-glow btn-round">
+                <i class="fa fa-instagram text-accent text-xl"></i>
+            </a>
+            <a href="#"
+                class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/50 transition-colors border-2 border-accent star-glow btn-round">
+                <i class="fa fa-qq text-accent text-xl"></i>
+            </a>
+        </div>
+
+        <!-- 版权信息（可修改） -->
+        <div class="text-neutral-200/80 text-lg font-medium animate-twinkle">
+            © 2025 森林夜话 - 让每一个夜晚都有森林和卡通相伴 🌿
+        </div>
+    </div>
+</footer>
 
 </html>
