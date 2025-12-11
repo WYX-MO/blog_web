@@ -15,4 +15,5 @@ urlpatterns = [
    path('download/<str:filename>/', views.download, name='download'),
    path('download_index/', views.download_index, name='download_index'),
    path('hello/', views.hello, name='hello'),
+   path('load-more-blogs/', views.load_more_blogs, name='load_more_blogs'),
 ]

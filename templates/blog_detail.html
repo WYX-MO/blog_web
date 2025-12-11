@@ -214,9 +214,9 @@
         <button type="button" class="btn-custom-star star-btn" data-article-id="{{ blog.id }}">
             {% if request.user.is_authenticated %}
             {% if blog.id in stars %}
-            <i class="fa fa-star mr-1"></i> 取消收藏
+             取消收藏
             {% else %}
-            <i class="fa fa-star-o mr-1"></i> 收藏
+             收藏
             {% endif %}
             {% else %}
             <i class="fa fa-lock mr-1"></i> 请登录收藏

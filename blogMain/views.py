@@ -13,6 +13,9 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.http import FileResponse
 from django.http import HttpResponseNotFound
+from django.db.models import Count
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 import os
 
 # Create your views here.
@@ -20,25 +23,84 @@ def hello(request):
     return render(request, 'newIndex.html')
 
 def index(request):
-    # 获取所有博客
-    blogs = BlogPost.objects.all()
-    # 初始化收藏的博客ID列表（兼容未登录）
+    # 1. 获取所有博客并按发布时间倒序排序（推荐）
+    blog_list = BlogPost.objects.all().order_by('-publicTime')
+    # 2. 分页配置：每页显示6条（可根据需求调整）
+    paginator = Paginator(blog_list, 6)
+    page = request.GET.get('page', 1)  # 默认第一页
+
+    try:
+        blogs = paginator.page(page)
+    except PageNotAnInteger:
+        blogs = paginator.page(1)
+    except EmptyPage:
+        blogs = paginator.page(paginator.num_pages)
+
+    # 3. 收藏的博客ID列表（兼容未登录）
     stars = []
     if request.user.is_authenticated:
         stars = Star_table.objects.filter(
             user_id=request.user.id
         ).values_list('blog_id', flat=True)
-    for s in stars:
-        s = int(s)
-    print(stars)
-    # # 为每个博客计算收藏总数
-    # for blog in blogs:
-    #     blog.star_count = Star_table.objects.filter(blog_id=blog.id).count()
-    
+    stars = [int(s) for s in stars]  # 转换为整数列表
+
+    # 4. 分类数据（带文章数量）
+    categories = BlogCategory.objects.annotate(blog_count=Count('blogpost'))
+
     return render(request, 'index.html', {
         'blogs': blogs,
-        'stars': stars
+        'stars': stars,
+        'categories': categories,
+        'paginator': paginator,  # 传递分页器供前端判断是否有下一页
     })
+
+@require_GET
+def load_more_blogs(request):
+    """加载更多博客的接口，返回JSON数据"""
+    try:
+        # 1. 获取分页参数
+        page = request.GET.get('page', 2)  # 默认加载第二页
+        page = int(page)
+
+        # 2. 查询博客并分页
+        blog_list = BlogPost.objects.all().order_by('-publicTime')
+        paginator = Paginator(blog_list, 6)  # 与index视图保持一致的每页数量
+
+        # 3. 获取指定页数据
+        blogs = paginator.page(page)
+
+        # 4. 构造返回的博客数据（序列化）
+        blog_data = []
+        for blog in blogs:
+            blog_data.append({
+                'id': blog.id,
+                'title': blog.title,
+                'category_name': blog.category.name,
+                'content': blog.content[:100],  # 与前端一致的截断
+                'author_username': blog.auther.username,
+                'author_id': blog.auther.id,
+                'comments_count': blog.comments.count(),
+                'stars_count': blog.stars,
+                'publicTime': blog.publicTime.strftime('%Y-%m-%d %H:%M'),  # 格式化时间
+                'detail_url': reverse('blogMain:blogMain_detail', args=[blog.id]),
+            })
+
+        # 5. 返回JSON响应
+        return JsonResponse({
+            'status': 'success',
+            'blogs': blog_data,
+            'has_next': blogs.has_next(),  # 是否有下一页
+            'next_page': page + 1 if blogs.has_next() else None,  # 下一页页码
+        })
+
+    except PageNotAnInteger:
+        return JsonResponse({'status': 'error', 'msg': '页码必须是整数'}, status=400)
+    except EmptyPage:
+        return JsonResponse({'status': 'error', 'msg': '没有更多数据了'}, status=404)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'msg': str(e)}, status=500)
+    
+
 
 def detail(request, blog_id):
     try:
@@ -101,9 +163,10 @@ def search(request):
         blogs = BlogPost.objects.filter(id__in=stars).all()
     else:
         stars = []
-        blogs = BlogPost.objects.filter(Q(title__icontains=q) | Q(content__icontains=q)).all()
+        blogs = BlogPost.objects.filter(Q(title__icontains=q) | Q(content__icontains=q) | Q(category__name=q)).all()
     print(blogs)
-    return render(request, 'index.html', {'blogs': blogs, 'stars': stars})
+    categories = BlogCategory.objects.annotate(blog_count=Count('blogpost'))
+    return render(request, 'index.html', {'blogs': blogs, 'stars': stars, 'categories': categories})
 
 def decoy(request):
     return render (request, "decoy.html")

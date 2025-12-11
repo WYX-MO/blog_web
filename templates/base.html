@@ -300,9 +300,9 @@
                 <div class="flex items-center animate-float pulse-soft shrink-0">
                     <div
                         class="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center cartoon-border mr-4 star-glow">
-                        <i class="fa fa-tree text-primary text-4xl"></i> <!-- 可替换Logo图标 -->
+                        <img src="{% static 'image/ico_mont.png' %}" alt="森林卡通装饰" class=""> <!-- 可替换Logo图标 -->
                     </div>
-                    <h1 class="text-4xl font-round font-bold text-cartoon text-accent">森林夜话</h1> <!-- 可修改网站名称 -->
+                    <h1 class="text-4xl font-round font-bold text-cartoon text-accent">篝火会</h1> <!-- 可修改网站名称 -->
                 </div>
 
                 <!-- 导航菜单：添加 flex-1 让导航占中间空间，md:justify-center 让导航在中等屏幕居中，移除不必要的样式 -->
@@ -332,7 +332,7 @@
                     </a>
                     <a href="{% url 'blogMain:download_index' %}"
                         class="font-round text-xl hover:text-accent transition-colors relative group px-1">
-                        下载
+                        关于
                         <span
                             class="absolute bottom-0 left-0 w-0 h-2 bg-accent rounded-full nav-underline group-hover:w-full"></span>
                     </a>
@@ -351,16 +351,12 @@
                                 id="search-btn"></i>
                         </form>
                     </div>
-                </div>
-
-                <!-- 用户信息/登录注册：保持原有逻辑，添加 flex items-center -->
-                <div class="flex items-center">
                     {% if user.is_authenticated %}
                     <div class="dropdown text-end">
-                        <a href="#" class="d-block link-light text-decoration-none dropdown-toggle"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <a href="#" class="d-block link-light text-decoration-none dropdown-toggle" data-bs-toggle="dropdown"
+                            aria-expanded="false">
                             <img src="{% static 'image/logo_img.png' %}" alt="用户头像" width="32" height="32"
-                                class="rounded-circle border border-secondary">
+                                class="rounded-circle border border-secondary sm:w-8 sm:h-8">
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end text-small">
                             <li><a class="dropdown-item text-danger" href="{% url 'blogAuth:blogAuth_logout' %}">Sign
@@ -388,15 +384,15 @@
             <div class="flex justify-center items-center mb-8">
                 <div
                     class="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center border-2 border-accent mr-4 animate-pulse-soft firefly-glow btn-round">
-                    <i class="fa fa-tree text-primary text-3xl"></i>
+                    <img src="{% static 'image/ico_mont.png' %}" alt="森林夜话logo" class="">
                 </div>
-                <h2 class="text-3xl font-round font-bold text-accent text-cartoon">森林夜话</h2> <!-- 可修改网站名称 -->
+                <h2 class="text-3xl font-round font-bold text-accent text-cartoon">IIZOM的森林篝火</h2> <!-- 可修改网站名称 -->
             </div>
 
             <!-- 页脚导航（可修改菜单项） -->
             <div class="flex flex-wrap justify-center gap-8 mb-8">
-                <a href="#home" class="font-round text-xl hover:text-accent transition-colors">首页</a>
-                <a href="#posts" class="font-round text-xl hover:text-accent transition-colors">夜话</a>
+                <a href="{% url 'blogMain:blogMain_index' %}" class="font-round text-xl hover:text-accent transition-colors">首页</a>
+                <a href="#posts" class="font-round text-xl hover:text-accent transition-colors">日志</a>
                 <a href="#categories" class="font-round text-xl hover:text-accent transition-colors">分类</a>
                 <a href="#about" class="font-round text-xl hover:text-accent transition-colors">关于我</a>
                 <a href="#contact" class="font-round text-xl hover:text-accent transition-colors">树洞</a>
@@ -404,19 +400,19 @@
 
             <!-- 页脚社交链接（可修改） -->
             <div class="flex justify-center gap-6 mb-8">
-                <a href="#"
+                <a href="https://github.com/WYX-MO/WYX-MO"
                     class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/50 transition-colors border-2 border-accent firefly-glow btn-round">
-                    <i class="fa fa-weibo text-accent text-xl"></i>
+                    <i class="fa fa-github text-accent text-xl"></i>
                 </a>
                 <a href="#"
                     class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/50 transition-colors border-2 border-accent star-glow btn-round">
                     <i class="fa fa-wechat text-accent text-xl"></i>
                 </a>
-                <a href="#"
+                <a href="https://space.bilibili.com/1122024455?spm_id_from=333.1007.0.0"
                     class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/50 transition-colors border-2 border-accent firefly-glow btn-round">
-                    <i class="fa fa-instagram text-accent text-xl"></i>
+                    <i class="fa fa-youtube text-accent text-xl"></i>
                 </a>
-                <a href="#"
+                <a href="https://www.qq.com/"
                     class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/50 transition-colors border-2 border-accent star-glow btn-round">
                     <i class="fa fa-qq text-accent text-xl"></i>
                 </a>
@@ -424,7 +420,7 @@
 
             <!-- 版权信息（可修改） -->
             <div class="text-neutral-200/80 text-lg font-medium animate-twinkle">
-                © 2025 森林夜话 - 让每一个夜晚都有森林和卡通相伴 🌿
+                © 2025 IIZOM的森林篝火 - 让每一个夜晚都有森林和伙伴相伴 🌿
             </div>
         </div>
     </footer>
