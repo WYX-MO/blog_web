@@ -217,13 +217,15 @@
                 </div>
             </div>
             <div class="p-6 flex flex-col justify-between">
-                <h4 class="text-2xl font-round font-bold mb-4 hover:text-accent transition-colors">
-                    <a href="{% url 'blogMain:blogMain_detail' blog.id %}">{{ blog.title }}</a> <!-- 后端对接：文章标题 -->
-                </h4>
-                <p class="text-neutral-200/90 mb-5 line-clamp-3 text-lg">
-                    {{ blog.content|striptags|truncatechars:100 }}
-                </p>
-                <div class="flex justify-between items-center">
+                <!-- <div class="flex-grow"> -->
+                    <h4 class="text-2xl font-round font-bold mb-4 hover:text-accent transition-colors">
+                        <a href="{% url 'blogMain:blogMain_detail' blog.id %}">{{ blog.title }}</a> <!-- 后端对接：文章标题 -->
+                    </h4>
+                    <p class="text-neutral-200/90 mb-5 line-clamp-3 text-lg">
+                        {{ blog.content|striptags|truncatechars:100 }}
+                    </p>
+                <!-- </div> -->
+                <div class="flex justify-between items-center mt-auto pt-4">
                     <div class="flex items-center">
                         <!-- 作者头像 - 【替换图片位置4】 -->
                         <img src="https://picsum.photos/60/60?random={{ blog.auther.id }}" alt="作者头像"
@@ -232,7 +234,8 @@
                         <span class="text-lg font-medium text-neutral-200">{{ blog.auther.username }}</span>
                         <!-- 后端对接：作者名称 -->
                     </div>
-                    <span class="text-neutral-200/70 font-medium">{{ blog.comments.count}}💬 {{blog.stars}}⭐ {{blog.publicTime }}</span> <!-- 后端对接：发布时间 -->
+                    <span class="text-neutral-200/70 font-medium">{{ blog.comments.count}}💬 {{blog.stars}}⭐
+                        {{blog.publicTime }}</span> <!-- 后端对接：发布时间 -->
                 </div>
             </div>
         </article>
@@ -246,12 +249,12 @@
     <div class="text-center mt-16" id="load-more-container">
         <button
             class="px-10 py-4 bg-neutral-800/80 border-3 border-accent rounded-cartoon font-round text-xl cartoon-btn hover:bg-accent/10 transition-colors firefly-glow btn-round"
-            id="load-more-btn" data-next-page="2" 
-            {% if not blogs.has_next %}style="display: none;"{% endif %}> <!-- 没有下一页则隐藏 -->
+            id="load-more-btn" data-next-page="2" {% if not blogs.has_next %}style="display: none;" {% endif %}>
+            <!-- 没有下一页则隐藏 -->
             探索更多 <i class="fa fa-leaf ml-3"></i>
         </button>
         <!-- 加载中提示（初始隐藏） -->
-        
+
         <!-- 没有更多数据提示（初始隐藏） -->
         <div id="no-more-tip" style="display: none; font-size: 1.2rem; color: #ccc;">
             已经到底啦～ 🌿
