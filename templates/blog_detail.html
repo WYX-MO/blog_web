@@ -1,5 +1,6 @@
-{%extends 'base.html' %}
+{% extends 'base.html' %}
 {% load static %}
+
 {% block title %}
 博客详情
 {% endblock %}
@@ -20,7 +21,7 @@
                 return;
             }
 
-            $btn.prop("disabled", true).text("处理中...");
+            $btn.prop("disabled", true).html('<i class="fa fa-spinner fa-spin mr-2"></i> 处理中...');
 
             $.ajax({
                 url: "{% url 'blogMain:toggle_star' %}",
@@ -49,90 +50,258 @@
         });
     });
 </script>
+<style>
+    /* 自定义样式：适配森林夜话风格 */
+    :root {
+        --primary-color: #2d6a4f;
+        /* 森林绿主色 */
+        --accent-color: #f9c74f;
+        /* 萤火黄强调色 */
+        --dark-bg: #1a1f24;
+        /* 最深背景 */
+        --card-bg: #272c31;
+        /* 基础卡片背景（评论/作者信息） */
+        --content-bg: #23282d;
+        /* 正文背景（稍浅） */
+        --title-bg: #2a2f36;
+        /* 标题背景（稍深） */
+        --border-color: #3d444d;
+        /* 边框颜色 */
+        --text-white: #f8f9fa;
+        /* 文字白色 */
+        --text-gray: #adb5bd;
+        /* 文字灰色 */
+        /* 磨砂玻璃相关：背景半透明 + 模糊度 */
+        --glass-bg: rgba(39, 44, 49, 0.6);
+        /* 卡片背景半透明 */
+        --glass-comment-bg: rgba(26, 31, 36, 0.7);
+        /* 评论卡片背景半透明 */
+        --glass-blur: 8px;
+        /* 模糊半径 */
+    }
+
+    /* 给整体容器添加背景，让磨砂效果更明显（可选，根据实际页面背景调整） */
+    body {
+        background-color: var(--dark-bg);
+        /* 如果有背景图，可添加以下样式 */
+        background: url("{% static 'image/bk2.png' %}") center/cover fixed;
+    }
+
+    .blog-detail-card {
+        /* 替换原有背景为磨砂玻璃 */
+        background: var(--glass-bg);
+        border: 2px solid var(--border-color);
+        border-radius: 1rem;
+        /* 大圆角 */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        /* 磨砂玻璃核心属性：模糊背景 */
+        backdrop-filter: blur(var(--glass-blur));
+        -webkit-backdrop-filter: blur(var(--glass-blur));
+        /* 兼容Safari */
+        /* 可选：添加边框半透明效果 */
+        border: 2px solid rgba(61, 68, 77, 0.5);
+    }
+
+    /* 标题区域卡片：更深的背景 */
+    .blog-title-card {
+        background: rgba(42, 47, 54, 0.6);
+        border: 2px solid rgba(61, 68, 77, 0.5);
+        border-radius: 1rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(var(--glass-blur));
+        -webkit-backdrop-filter: blur(var(--glass-blur));
+    }
+
+    /* 正文区域卡片：稍浅的背景 */
+    .blog-content-card {
+        background: rgba(35, 40, 45, 0.6);
+        border: 2px solid rgba(61, 68, 77, 0.5);
+        border-radius: 1rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(var(--glass-blur));
+        -webkit-backdrop-filter: blur(var(--glass-blur));
+    }
+
+    .section-divider {
+        border: none;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+        margin: 2rem 0;
+    }
+
+    .btn-custom-star {
+        background-color: var(--accent-color);
+        border: none;
+        border-radius: 0.8rem;
+        color: var(--dark-bg);
+        font-weight: 600;
+        padding: 0.5rem 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-custom-star:hover {
+        background-color: #f8961e;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(249, 199, 79, 0.4);
+    }
+
+    .btn-custom-submit {
+        background-color: var(--primary-color);
+        border: none;
+        border-radius: 0.8rem;
+        color: var(--text-white);
+        font-weight: 600;
+        padding: 0.5rem 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-custom-submit:hover {
+        background-color: #1b4332;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(45, 106, 79, 0.4);
+    }
+
+    .input-custom {
+        border: 2px solid var(--border-color);
+        border-radius: 0.8rem;
+        background-color: var(--dark-bg);
+        color: var(--text-white);
+    }
+
+    .input-custom:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 0.2rem rgba(249, 199, 79, 0.25);
+        background-color: var(--dark-bg);
+        color: var(--text-white);
+    }
+
+    /* 评论卡片：磨砂玻璃效果 */
+    .comment-card {
+        /* 替换原有背景为磨砂玻璃 */
+        background: var(--glass-comment-bg);
+        border: 1px solid rgba(61, 68, 77, 0.5);
+        border-radius: 0.8rem;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        /* 磨砂玻璃核心属性 */
+        backdrop-filter: blur(var(--glass-blur));
+        -webkit-backdrop-filter: blur(var(--glass-blur));
+        /* 可选：添加轻微阴影增强层次感 */
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .author-info {
+        color: var(--text-gray);
+    }
+
+    .blog-content {
+        line-height: 1.8;
+        font-size: 1.1rem;
+    }
+
+    /* 可选：如果需要单独给评论表单容器加更强的磨砂效果，可添加此类 */
+    .comment-form-container {
+        padding: 1rem 0;
+    }
+</style>
 {% endblock %}
 
 {% block main %}
-<!-- 核心：flex + space-between 实现左右分布，width:100% 占满父容器宽度 -->
-<div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-    <h1 style="margin: 0;">博客详情页</h1> <!-- 清除h1默认margin避免换行 -->
-    <button type="button" class="btn btn-warning star-btn" data-article-id="{{ blog.id }}">
-        {% if request.user.is_authenticated %}
+<div class="container py-5">
+    <!-- 头部：标题 + 收藏按钮 -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-3">
+        <h1 class="text-white mb-0" style="font-size: 2.5rem; font-weight: 700;">{{ blog.title }}</h1>
+        <button type="button" class="btn-custom-star star-btn" data-article-id="{{ blog.id }}">
+            {% if request.user.is_authenticated %}
             {% if blog.id in stars %}
-            取消收藏
+            <i class="fa fa-star mr-1"></i> 取消收藏
             {% else %}
-            收藏
+            <i class="fa fa-star-o mr-1"></i> 收藏
             {% endif %}
+            {% else %}
+            <i class="fa fa-lock mr-1"></i> 请登录收藏
+            {% endif %}
+        </button>
+    </div>
+
+    <!-- 分割线 -->
+    <hr class="section-divider">
+
+    <!-- 作者信息区域 -->
+    <div class="blog-detail-card p-4 mb-5">
+        <div class="d-flex align-items-center">
+            <img src="{% static 'image/logo_img.png' %}" alt="Author Avatar" width="40" height="40"
+                class="d-inline-block align-text-top rounded-circle border-2 border-accent">
+            <div class="ms-3 author-info">
+                <span class="text-white fw-medium">{{ blog.auther.username }}</span>
+                <span class="text-gray-400 ms-2">于 {{ blog.publicTime }} 发布</span>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 博客内容区域（稍浅背景） -->
+    <div class="blog-content-card p-5 mb-5 blog-content">
+        <p class="text-white">{{ blog.content | safe }}</p>
+    </div>
+
+    <!-- 分割线 -->
+    <hr class="section-divider">
+
+    <!-- 评论和收藏区域 -->
+    <div class="blog-detail-card p-4 mb-5">
+        <!-- 收藏和评论数 -->
+        <h3 class="text-white mb-4" id="star-count-{{ blog.id }}">
+            <i class="fa fa-comment-o mr-2"></i>{{ blog.comments.count }} 条评论
+            <i class="fa fa-star-o mr-2 ms-4"></i>{{ blog.stars }} 个收藏
+        </h3>
+
+        <!-- 评论表单：外层容器已继承blog-detail-card的磨砂效果 -->
+        <div class="comment-form-container">
+            <form action="{% url 'blogMain:blogMain_comment' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="blog_id" value="{{ blog.id }}">
+                <div class="mb-3">
+                    <label class="form-label text-white mb-2">写下你的评论</label>
+                    <input type="text" class="form-control input-custom" name="content" placeholder="分享你的想法...">
+                </div>
+                <div class="text-end">
+                    <button type="submit" class="btn-custom-submit">
+                        <i class="fa fa-paper-plane mr-1"></i> 提交评论
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 评论列表区域 -->
+    <div class="blog-detail-card p-4">
+        <h4 class="text-white mb-4">
+            <i class="fa fa-comments-o mr-2"></i> 评论区
+        </h4>
+        {% if blog.comments.all %}
+        {% for comment in blog.comments.all %}
+        <div class="comment-card">
+            <div class="d-flex align-items-center mb-3">
+                <img src="{% static 'image/logo_img.png' %}" alt="Comment Avatar" width="35" height="35"
+                    class="d-inline-block align-text-top rounded-circle border-2 border-accent">
+                <div class="ms-3 author-info">
+                    <span class="text-white fw-medium">{{ comment.auther.username }}</span>
+                    <span class="text-gray-400 ms-2">{{ comment.publicTime }}</span>
+                </div>
+            </div>
+            <p class="text-white mb-0">{{ comment.content }}</p>
+        </div>
+        {% endfor %}
         {% else %}
-            请登录收藏
+        <div class="text-center py-5 text-gray-400">
+            <i class="fa fa-comment-empty text-3xl mb-2"></i>
+            <p>暂无评论，快来抢沙发吧～</p>
+        </div>
         {% endif %}
-    </button>
+    </div>
 </div>
 
-
-<hr>
-<div class="mt-2">
-    <img src="{% static 'image/logo_img.png' %}" alt="Author Avatar" width="30" height="30"
-        class="d-inline-block align-text-top rounded-circle">
-    <span class="ms-2 text-white">{{ blog.auther }}</span>
-    <span class="ms-2 text-white">于</span>
-    <span class="ms-2 text-white">{{ blog.publicTime }}</span>发布
-</div>
-<hr>
-<div class="py-2">
-    <h3 class="text-white">{{ blog.title }}</h3>
-</div>
-<div class="py-2">
-    <p class="text-white">{{ blog.content | safe }}</p>
-</div>
-
-
-
-<!-- <div class="card text-bg-dark" style="width: 100%; border: 4px solid #756b68; border-radius: 0.5rem;">
-            <div class="card-body" style="background-color: #272c31;">
-                <h3 class="card-title">博客标题</h3>
-                <p class="card-text">这里是博客的详细内容。可以包含多段文字、图片等丰富内容。</p>
-            </div>  
-            <div class="card-footer" style="background-color: #272c31;">
-                <p class="card-text text-end">发布时间：2023-10-10</p>
-            </div>
-        </div> -->
-
-<hr>
-<div class="mt-2">
-    <h3 class="text-white" id="star-count-{{ blog.id }}">{{ blog.comments.count }} 条评论 {{ blog.stars }} 个收藏</h3>
-    <form action="{% url 'blogMain:blogMain_comment' %}" method="post">
-        {% csrf_token %}
-        <input type="hidden" name="blog_id" value="{{ blog.id }}">
-        <div class="input-group mb-3">
-            <span class="input-group-text text-white bg-dark" id="inputGroup-sizing-default">To Author Name</span>
-            <input type="text" class="form-control text-white bg-dark" aria-label="Sizing example input"
-                aria-describedby="inputGroup-sizing-default" name="content">
-        </div>
-        <div class="text-end">
-            <button type="submit" class="btn btn-warning">submit</button>
-        </div>
-
-    </form>
-</div>
-
-<div class="mt-2">
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item text-bg-dark mb-2">
-            {% for comment in blog.comments.all %}
-            <div class="d-flex align-items-center mb-2">
-                <img src="{% static 'image/logo_img.png' %}" alt="" width="30" height="30"
-                    class="d-inline-block align-text-top rounded-circle">
-                <span class="ms-2 text-white">{{ comment.auther }}</span>
-                <span class="ms-2 text-white">于</span>
-                <span class="ms-2 text-white">{{ comment.publicTime }}</span>评论
-            </div>
-            <p class="text-white">{{ comment.content }}</p>
-            <hr>
-            {% endfor %}
-
-        </li>
-    </ul>
-</div>
 <script>
     hljs.highlightAll();
 </script>
