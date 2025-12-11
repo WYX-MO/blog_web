@@ -48,57 +48,166 @@
         });
     });
 </script>
+
+
 {% endblock %}
 
 {% block main %}
-<h1 class="text-white">博客主页</h1>
-<div class="row row-cols-2 row-gap-4">
-    {% for blog in blogs %}
-    <div class="col">
-        <div class="card text-bg-dark" style="width: 100%; border: 4px solid #756b68; border-radius: 0.5rem;">
-            <div class="card-body" style="background-color: #272c31;">
-                <h5 class="card-title">{{ blog.title }}</h5>
-                <p class="card-text">{{ blog.content|striptags|truncatechars:100 }}</p>
-            </div>
-
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item text-bg-dark border-top border-secondary">发表者：{{ blog.auther.username }}</li>
-                <li class="list-group-item text-bg-dark border-top border-secondary">标签：{{ blog.category.name }}</li>
-                <!-- 优化：给收藏数元素加唯一ID，避免全局ID冲突 -->
-                <li class="list-group-item text-bg-dark border-top border-secondary" id="star-count-{{ blog.id }}">
-                    {{ blog.comments.count}} 条评论 {{blog.stars}}个收藏
-                </li>
-            </ul>
-
-            <div class="card-body d-flex justify-content-between" style="background-color: #272c31;">
-                <div>
-                    <a href="{% url 'blogMain:blogMain_detail' blog.id %}" class="btn btn-outline-light me-2">详情</a>
-                    <button type="button" class="btn btn-warning star-btn" data-article-id="{{ blog.id }}">
-                        {% if request.user.is_authenticated %}
-                            {% if blog.id in stars %}
-                                取消收藏
-                            {% else %}
-                                收藏
-                            {% endif %}
-                        {% else %}
-                            请登录收藏
-                        {% endif %}
-                    </button>
-                </div>
-
-                <div class="d-flex align-items-center gap-2">
-                    <div>{{ blog.publicTime }}</div>
-                    <div>
-                        <img src="{% static 'image/logo_img.png' %}" alt="Logo" width="30" height="30"
-                            class="d-inline-block align-text-top rounded-circle">
-                    </div>
-                    <div><span class="text-white">{{ blog.create_time }}</span></div>
-                </div>
+<!-- 首页横幅 -->
+<section id="home" class="relative mb-20 animate-fade-in">
+    <div class="bg-neutral-900/60 bg-blur rounded-cartoon-lg cartoon-shadow p-8 md:p-16">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2
+                class="text-[clamp(2.5rem,6vw,4.5rem)] font-round font-bold text-accent mb-6 text-cartoon animate-slide-up">
+                森林里的卡通夜话
+            </h2>
+            <p class="text-xl md:text-2xl mb-10 animate-slide-up text-neutral-200">
+                在静谧的森林夜晚，用卡通的笔触记录星光、萤火和林间趣事～
+                每一个故事，都是森林送给你的温柔礼物 ✨
+            </p>
+            <div class="cartoon-divider animate-slide-up"></div>
+            <div class="mt-10 flex flex-wrap justify-center gap-6 animate-slide-up">
+                <a href="#posts" class="px-9 py-3 bg-emerald-900 text-white font-round rounded-lg cartoon-btn hover:bg-emerald-900/90 text-xl
+                    firefly-glow btn-round">
+                    探索夜话 <i class="fa fa-firefly ml-2"></i>
+                </a>
+                <a href="#about" class="px-9 py-3 bg-neutral-800/80 border-2 border-accent rounded-lg cartoon-btn hover:bg-accent/10 text-xl
+                    btn-round">
+                    认识守林人 <i class="fa fa-user-o ml-2"></i>
+                </a>
             </div>
         </div>
     </div>
-    {% empty %}
-    <div class="col-12 text-center text-white">暂无博客内容</div>
-    {% endfor %}
-</div>
+
+    <!-- 装饰图片 - 【替换图片位置2】 -->
+    <div class="absolute -top-12 -left-12 hidden md:block animate-float">
+        <img src="https://picsum.photos/id/118/120/120" alt="森林卡通装饰"
+            class="w-32 h-32 opacity-85 rounded-full forest-filter"> <!-- 替换为自己的装饰图片 -->
+    </div>
+</section>
+
+<!-- 文章列表 - 【后端对接点2：文章列表数据】 -->
+<section id="posts" class="mb-20">
+    <div class="text-center mb-16">
+        <h3 class="text-[clamp(2rem,5vw,3.5rem)] font-round font-bold text-accent mb-6 text-cartoon animate-twinkle">
+            林间卡通日志
+        </h3>
+        <div class="cartoon-divider"></div>
+    </div>
+
+    <!-- 文章卡片列表（后端对接：循环渲染文章数据） -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="post-list-container">
+        {% for blog in blogs %}
+        <!-- 文章卡片1 - 【替换图片位置3】 -->
+        <article
+            class="post-card bg-neutral-800/70 bg-blur rounded-cartoon cartoon-shadow overflow-hidden animate-slide-up">
+            <div class="relative h-56 overflow-hidden rounded-t-cartoon">
+                <img src="https://picsum.photos/id/1082/600/400" alt="文章封面"
+                    class="w-full h-full object-cover forest-filter"> <!-- 替换为文章封面图 -->
+                <div
+                    class="absolute top-4 left-4 bg-accent/90 text-neutral-900 text-lg px-4 py-2 rounded-cartoon font-round category-tag">
+                    {{ blog.category.name }} <!-- 后端对接：文章分类 -->
+                </div>
+            </div>
+            <div class="p-6">
+                <h4 class="text-2xl font-round font-bold mb-4 hover:text-accent transition-colors">
+                    <a href="#">{{ blog.title }}</a> <!-- 后端对接：文章标题 -->
+                </h4>
+                <p class="text-neutral-200/90 mb-5 line-clamp-3 text-lg">
+                    {{ blog.content|striptags|truncatechars:100 }}
+                </p>
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center">
+                        <!-- 作者头像 - 【替换图片位置4】 -->
+                        <img src="https://picsum.photos/id/{{ blog.auther.id }}/60/60" alt="作者头像"
+                            class="w-10 h-10 rounded-full mr-3 border-2 border-accent forest-filter">
+                        <!-- 替换为作者头像 -->
+                        <span class="text-lg font-medium text-neutral-200">{{ blog.auther.username }}</span>
+                        <!-- 后端对接：作者名称 -->
+                    </div>
+                    <span class="text-neutral-200/70 font-medium">{{ blog.publicTime }}</span> <!-- 后端对接：发布时间 -->
+                </div>
+            </div>
+        </article>
+        {% empty %}
+        <div class="col-12 text-center text-white">暂无博客内容</div>
+        {% endfor %}
+
+    </div>
+
+    <!-- 加载更多按钮 - 【后端对接点3：加载更多文章】 -->
+    <div class="text-center mt-16">
+        <button
+            class="px-10 py-4 bg-neutral-800/80 border-3 border-accent rounded-cartoon font-round text-xl cartoon-btn hover:bg-accent/10 transition-colors firefly-glow btn-round"
+            id="load-more-btn">
+            探索更多 <i class="fa fa-leaf ml-3"></i> <!-- 后端对接：点击加载下一页文章 -->
+        </button>
+    </div>
+</section>
+
+<!-- 分类区域 - 【后端对接点4：分类数据】 -->
+<section id="categories" class="mb-20">
+    <div class="text-center mb-16">
+        <h3 class="text-[clamp(2rem,5vw,3.5rem)] font-round font-bold text-accent mb-6 text-cartoon animate-twinkle">
+            夜话分类
+        </h3>
+        <div class="cartoon-divider"></div>
+    </div>
+
+    <!-- 分类卡片列表（后端对接：循环渲染分类数据） -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
+        <!-- 分类卡片1 -->
+        <div
+            class="bg-neutral-800/70 bg-blur rounded-cartoon cartoon-shadow p-7 text-center hover:bg-primary/20 transition-all animate-slide-up firefly-glow">
+            <div
+                class="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 border-3 border-accent animate-pulse-soft">
+                <i class="fa fa-paint-brush text-accent text-4xl"></i> <!-- 可替换分类图标 -->
+            </div>
+            <h4 class="text-2xl font-round font-bold mb-3 text-neutral-100">森林手绘</h4> <!-- 后端对接：分类名称 -->
+            <p class="text-neutral-200/80 mb-5 text-lg">22篇夜话</p> <!-- 后端对接：分类下文章数量 -->
+            <a href="#"
+                class="text-accent hover:underline font-round text-lg inline-block px-5 py-2 border border-accent/30 rounded-full hover:bg-accent/10 transition-all btn-round">进入树洞</a>
+            <!-- 后端对接：分类链接 -->
+        </div>
+
+        <!-- 分类卡片2 -->
+        <div class="bg-neutral-800/70 bg-blur rounded-cartoon cartoon-shadow p-7 text-center hover:bg-primary/20 transition-all animate-slide-up star-glow"
+            style="animation-delay: 0.2s">
+            <div
+                class="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 border-3 border-accent animate-pulse-soft">
+                <i class="fa fa-film text-accent text-4xl"></i>
+            </div>
+            <h4 class="text-2xl font-round font-bold mb-3 text-neutral-100">动漫杂谈</h4>
+            <p class="text-neutral-200/80 mb-5 text-lg">16篇夜话</p>
+            <a href="#"
+                class="text-accent hover:underline font-round text-lg inline-block px-5 py-2 border border-accent/30 rounded-full hover:bg-accent/10 transition-all btn-round">进入树洞</a>
+        </div>
+
+        <!-- 分类卡片3 -->
+        <div class="bg-neutral-800/70 bg-blur rounded-cartoon cartoon-shadow p-7 text-center hover:bg-primary/20 transition-all animate-slide-up firefly-glow"
+            style="animation-delay: 0.4s">
+            <div
+                class="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 border-3 border-accent animate-pulse-soft">
+                <i class="fa fa-lightbulb-o text-accent text-4xl"></i>
+            </div>
+            <h4 class="text-2xl font-round font-bold mb-3 text-neutral-100">创作灵感</h4>
+            <p class="text-neutral-200/80 mb-5 text-lg">28篇夜话</p>
+            <a href="#"
+                class="text-accent hover:underline font-round text-lg inline-block px-5 py-2 border border-accent/30 rounded-full hover:bg-accent/10 transition-all btn-round">进入树洞</a>
+        </div>
+
+        <!-- 分类卡片4 -->
+        <div class="bg-neutral-800/70 bg-blur rounded-cartoon cartoon-shadow p-7 text-center hover:bg-primary/20 transition-all animate-slide-up star-glow"
+            style="animation-delay: 0.6s">
+            <div
+                class="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 border-3 border-accent animate-pulse-soft">
+                <i class="fa fa-gift text-accent text-4xl"></i>
+            </div>
+            <h4 class="text-2xl font-round font-bold mb-3 text-neutral-100">周边分享</h4>
+            <p class="text-neutral-200/80 mb-5 text-lg">32篇夜话</p>
+            <a href="#"
+                class="text-accent hover:underline font-round text-lg inline-block px-5 py-2 border border-accent/30 rounded-full hover:bg-accent/10 transition-all btn-round">进入树洞</a>
+        </div>
+    </div>
+</section>
 {% endblock %}

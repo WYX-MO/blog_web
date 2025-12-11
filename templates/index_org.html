@@ -75,13 +75,13 @@
                     <a href="{% url 'blogMain:blogMain_detail' blog.id %}" class="btn btn-outline-light me-2">详情</a>
                     <button type="button" class="btn btn-warning star-btn" data-article-id="{{ blog.id }}">
                         {% if request.user.is_authenticated %}
-                            {% if blog.id in stars %}
-                                取消收藏
-                            {% else %}
-                                收藏
-                            {% endif %}
+                        {% if blog.id in stars %}
+                        取消收藏
                         {% else %}
-                            请登录收藏
+                        收藏
+                        {% endif %}
+                        {% else %}
+                        请登录收藏
                         {% endif %}
                     </button>
                 </div>

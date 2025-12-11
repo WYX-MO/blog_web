@@ -320,7 +320,8 @@
                     <span
                         class="absolute bottom-0 left-0 w-0 h-2 bg-accent rounded-full nav-underline group-hover:w-full"></span>
                 </a>
-                <a href="#" class="font-round text-xl hover:text-accent transition-colors relative group">
+                <a href="#" class="font-round text-xl hover:text-accent transition-colors relative group"
+                    id="star-show">
                     收藏
                     <span
                         class="absolute bottom-0 left-0 w-0 h-2 bg-accent rounded-full nav-underline group-hover:w-full"></span>
@@ -341,7 +342,7 @@
                         class="px-5 py-3 pl-12 bg-neutral-800/80 rounded-cartoon border-2 border-accent/30 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent text-lg text-neutral-100 btn-round"
                         id="search-input" aria-label="Search" name="q"> <!-- 后端对接：绑定搜索接口，监听回车/点击事件 -->
                     <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-accent/80 text-xl"
-                        id="search-btn"></i> 
+                        id="search-btn"></i>
                 </form>
             </div>
             {% if user.is_authenticated %}
