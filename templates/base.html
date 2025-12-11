@@ -423,5 +423,92 @@
         </div>
     </div>
 </footer>
+<!-- 返回顶部按钮 -->
+<button id="back-to-top"
+    class="fixed bottom-10 right-10 w-16 h-16 bg-accent text-neutral-900 rounded-full flex items-center justify-center cartoon-shadow opacity-0 invisible transition-all hover:bg-accent/90 border-3 border-white firefly-glow btn-round">
+    <i class="fa fa-arrow-up text-2xl"></i>
+</button>
+
+<!-- JavaScript - 【后端对接核心区域】 -->
+<script>
+    // ===================== 基础功能 =====================
+    // 返回顶部按钮
+    const backToTopBtn = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            backToTopBtn.classList.remove('opacity-0', 'invisible');
+            backToTopBtn.classList.add('opacity-100', 'visible', 'animate-pulse-soft');
+        } else {
+            backToTopBtn.classList.add('opacity-0', 'invisible');
+            backToTopBtn.classList.remove('opacity-100', 'visible', 'animate-pulse-soft');
+        }
+    });
+
+    backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+        backToTopBtn.classList.add('animate-bounce');
+        setTimeout(() => {
+            backToTopBtn.classList.remove('animate-bounce');
+        }, 800);
+    });
+
+    // 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // 元素进入视口动画
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = 1;
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+
+    // 初始化动画元素
+    document.querySelectorAll('.animate-fade-in, .animate-slide-up, .animate-twinkle').forEach(el => {
+        el.style.opacity = 0;
+        if (el.classList.contains('animate-slide-up')) {
+            el.style.transform = 'translateY(20px)';
+        }
+        el.style.transition = 'opacity 0.8s ease-out, transform 0.6s ease-out';
+        observer.observe(el);
+    });
+
+    // 生成少量萤火虫
+    function createFireflies(count) {
+        const container = document.body;
+        for (let i = 0; i < count; i++) {
+            const firefly = document.createElement('div');
+            firefly.classList.add('firefly', 'animate-firefly');
+            const top = Math.random() * 100;
+            const left = Math.random() * 100;
+            const delay = Math.random() * 6;
+            firefly.style.top = `${top}%`;
+            firefly.style.left = `${left}%`;
+            firefly.style.animationDelay = `${delay}s`;
+            container.appendChild(firefly);
+        }
+    }
+
+</script>
 
 </html>

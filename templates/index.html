@@ -102,8 +102,8 @@
         <article
             class="post-card bg-neutral-800/70 bg-blur rounded-cartoon cartoon-shadow overflow-hidden animate-slide-up">
             <div class="relative h-56 overflow-hidden rounded-t-cartoon">
-                <img src="https://picsum.photos/id/1082/600/400" alt="文章封面"
-                    class="w-full h-full object-cover forest-filter"> <!-- 替换为文章封面图 -->
+                <img src="https://picsum.photos/id/{{ blog.id }}/600/400" alt="文章封面" class="w-full h-full object-cover">
+                <!-- 替换为文章封面图 -->
                 <div
                     class="absolute top-4 left-4 bg-accent/90 text-neutral-900 text-lg px-4 py-2 rounded-cartoon font-round category-tag">
                     {{ blog.category.name }} <!-- 后端对接：文章分类 -->
@@ -111,7 +111,7 @@
             </div>
             <div class="p-6">
                 <h4 class="text-2xl font-round font-bold mb-4 hover:text-accent transition-colors">
-                    <a href="#">{{ blog.title }}</a> <!-- 后端对接：文章标题 -->
+                    <a href="{% url 'blogMain:blogMain_detail' blog.id %}">{{ blog.title }}</a> <!-- 后端对接：文章标题 -->
                 </h4>
                 <p class="text-neutral-200/90 mb-5 line-clamp-3 text-lg">
                     {{ blog.content|striptags|truncatechars:100 }}
@@ -120,11 +120,13 @@
                     <div class="flex items-center">
                         <!-- 作者头像 - 【替换图片位置4】 -->
                         <img src="https://picsum.photos/id/{{ blog.auther.id }}/60/60" alt="作者头像"
-                            class="w-10 h-10 rounded-full mr-3 border-2 border-accent forest-filter">
+                            class="w-10 h-10 rounded-full mr-3 border-2 border-accent">
                         <!-- 替换为作者头像 -->
                         <span class="text-lg font-medium text-neutral-200">{{ blog.auther.username }}</span>
                         <!-- 后端对接：作者名称 -->
                     </div>
+                    <span class="text-neutral-200/70 font-medium">{{ blog.comments.count}}💬 {{blog.stars}}⭐</span>
+                    <!-- 后端对接：发布时间 -->
                     <span class="text-neutral-200/70 font-medium">{{ blog.publicTime }}</span> <!-- 后端对接：发布时间 -->
                 </div>
             </div>
